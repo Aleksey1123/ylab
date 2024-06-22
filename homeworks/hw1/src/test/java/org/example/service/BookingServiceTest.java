@@ -3,10 +3,10 @@ package org.example.service;
 import org.example.entity.Booking;
 import org.example.entity.User;
 import org.example.entity.Workplace;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
