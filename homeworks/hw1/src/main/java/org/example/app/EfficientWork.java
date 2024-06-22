@@ -31,7 +31,6 @@ public class EfficientWork {
         boolean flag;
 
         do {
-
             if (!editPanelNotShown)
                 help();
             editPanelNotShown = false;
@@ -151,13 +150,16 @@ public class EfficientWork {
 
     /** Регистрация пользователя с помощью вызова addUser() у соответствующего сервиса.
      * Метод пробрасывает RuntimeException в случаях: если пользователь под таким именем уже существует,
-     * если addUser() возвращает null, что соответствует ошибке регистрации.
+     * если имя пользователя пустое, если addUser() возвращает null, что соответствует ошибке регистрации.
      **/
     public void registerUser() {
 
         try {
             System.out.println("Введите имя пользователя: ");
             String username = IN.nextLine();
+
+            if (username.isEmpty())
+                throw new RuntimeException("Имя пользователя должно содержать минимум 1 символ.");
 
             if (userService.getAllUsers().containsKey(username)) {
                 throw new RuntimeException("Такой пользователь уже существует.\n" +
@@ -251,7 +253,7 @@ public class EfficientWork {
                 throw new RuntimeException("Конфликт бронирования с " + conflicts + ".");
             }
 
-            System.out.println("Вы успешно забронировали место!");
+            System.out.println("Вы успешно забронировали ресурс: " + resourceId + ".");
         }
         catch (DateTimeException exception) {
             System.out.println("Некорректно введена дата.");
@@ -337,7 +339,7 @@ public class EfficientWork {
         LocalDateTime date = LocalDateTime.parse(startDateTimeString);
 
         List<Booking> bookings = bookingService.getAllBookingsByDate(date);
-        System.out.println("----------------Список всех бронирований по данному ресурсу----------------");
+        System.out.println("----------------Список всех бронирований по данной дате----------------");
 
         if (bookings.isEmpty())
             System.out.println("Для данной даты и времени нет еще ни одного бронирования.");
