@@ -12,6 +12,10 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>5.7.0</junit.version>
+        <assertj.version>3.21.0</assertj.version>
+        <mockito.version>5.11.0</mockito.version>
+        <lombock.version>1.18.32</lombock.version>
     </properties>
 
     <dependencies>
@@ -19,52 +23,42 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.7.0</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.0</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.21.0</version>
+            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>uk.org.webcompere</groupId>
-            <artifactId>system-stubs-jupiter</artifactId>
-            <version>2.0.2</version>
-            <scope>test</scope>
-        </dependency>
-
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.11.0</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.11.0</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.32</version>
+            <version>${lombock.version}</version>
             <scope>provided</scope>
         </dependency>
-
 
     </dependencies>
 

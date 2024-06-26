@@ -1,10 +1,12 @@
 package org.example.app;
 
+import org.example.command.*;
 import org.example.entity.Booking;
 import org.example.entity.ConferenceHall;
 import org.example.entity.Workplace;
 import org.example.service.BookingService;
-import org.example.service.ResourceService;
+import org.example.service.ConferenceHallService;
+import org.example.service.WorkplaceService;
 import org.example.service.UserService;
 import org.example.entity.User;
 
@@ -21,103 +23,59 @@ public class EfficientWork {
 
     private final UserService userService = new UserService();
     private final BookingService bookingService = new BookingService();
-    private final ResourceService resourceService = new ResourceService();
+    private final WorkplaceService workplaceService = new WorkplaceService();
+    private final ConferenceHallService hallService = new ConferenceHallService();
+
+    private final CommandInvoker invoker = new CommandInvoker();
+
+    public EfficientWork() {
+
+        invoker.registerCommand("?", new PrintRegisteredUsersCommand(this));
+        invoker.registerCommand("help", new HelpCommand(this));
+        invoker.registerCommand("1", new RegisterUserCommand(this));
+        invoker.registerCommand("2", new AuthorizeCommand(this));
+        invoker.registerCommand("3", new BookResourceCommand(this));
+        invoker.registerCommand("4", new CancelBookingCommand(this));
+        invoker.registerCommand("5", new ViewAllBookingsCommand(this));
+        invoker.registerCommand("6", new ViewBookingsByResourceCommand(this));
+        invoker.registerCommand("7", new ViewAllBookingsByUserCommand(this));
+        invoker.registerCommand("8", new ViewAllBookingsByDateCommand(this));
+        invoker.registerCommand("9", new LogOutCommand(this));
+        invoker.registerCommand("edit", new ShowEditMenuCommand(this));
+        invoker.registerCommand("cw", new CreateWorkplaceCommand(this));
+        invoker.registerCommand("gw", new GetWorkplaceCommand(this));
+        invoker.registerCommand("gaw", new GetAllWorkplacesCommand(this));
+        invoker.registerCommand("uw", new UpdateWorkplaceCommand(this));
+        invoker.registerCommand("dw", new DeleteWorkplaceCommand(this));
+        invoker.registerCommand("ch", new CreateConferenceHallCommand(this));
+        invoker.registerCommand("gh", new GetConferenceHallCommand(this));
+        invoker.registerCommand("gah", new GetAllConferenceHallsCommand(this));
+        invoker.registerCommand("uh", new UpdateConferenceHallCommand(this));
+        invoker.registerCommand("dh", new DeleteConferenceHallCommand(this));
+    }
 
     /**
      * Бесконечный цикл, который обеспечивает работу консольного приложения.
      */
     public void startApp() {
 
-        boolean flag;
-
         do {
-
             if (!editPanelNotShown)
                 help();
             editPanelNotShown = false;
             String decision = IN.nextLine();
-            flag = handleBasicInput(decision);
-        } while (flag);
+
+            if (decision.equals("quit"))
+                break;
+
+            handleBasicInput(decision);
+        } while (true);
     }
 
     /** Switch выражение, которое перенаправляет работу на отдельные методы. **/
-    public boolean handleBasicInput(String decision) {
+    public void handleBasicInput(String decision) {
 
-        switch (decision) {
-            case "?":
-                printRegisteredUsers();
-                break;
-            case "help":
-                help();
-                break;
-            case "1":
-                registerUser();
-                break;
-            case "2":
-                authorize();
-                break;
-            case "3":
-                bookResource();
-                break;
-            case "4":
-                cancelBooking();
-                break;
-            case "5":
-                viewAllBookings();
-                break;
-            case "6":
-                viewAllBookingsFilteredByResource();
-                break;
-            case "7":
-                viewAllBookingsFilteredByUser();
-                break;
-            case "8":
-                viewAllBookingsFilteredByDate();
-                break;
-            case "9":
-                logOut();
-                break;
-            case "edit":
-                showEditMenu();
-                editPanelNotShown = true;
-                break;
-            case "cw":
-                createWorkplace();
-                break;
-            case "gw":
-                getWorkplace();
-                break;
-            case "gaw":
-                getAllWorkPlaces();
-                break;
-            case "uw":
-                updateWorkplace();
-                break;
-            case "dw":
-                deleteWorkplace();
-                break;
-            case "ch":
-                createConferenceHall();
-                break;
-            case "gh":
-                getConferenceHall();
-                break;
-            case "gah":
-                getAllConferenceHalls();
-                break;
-            case "uh":
-                updateConferenceHall();
-                break;
-            case "dh":
-                deleteConferenceHall();
-                break;
-            case "quit":
-                return false;
-            default:
-                System.out.println("Неверный аргумент, попробуйте снова!");
-        }
-
-        return true;
+       invoker.executeCommand(decision);
     }
 
     /** Вывод панели с основными командами на экран. **/
@@ -151,13 +109,16 @@ public class EfficientWork {
 
     /** Регистрация пользователя с помощью вызова addUser() у соответствующего сервиса.
      * Метод пробрасывает RuntimeException в случаях: если пользователь под таким именем уже существует,
-     * если addUser() возвращает null, что соответствует ошибке регистрации.
+     * если имя пользователя пустое, если addUser() возвращает null, что соответствует ошибке регистрации.
      **/
     public void registerUser() {
 
         try {
             System.out.println("Введите имя пользователя: ");
             String username = IN.nextLine();
+
+            if (username.isEmpty())
+                throw new RuntimeException("Имя пользователя должно содержать минимум 1 символ.");
 
             if (userService.getAllUsers().containsKey(username)) {
                 throw new RuntimeException("Такой пользователь уже существует.\n" +
@@ -251,7 +212,7 @@ public class EfficientWork {
                 throw new RuntimeException("Конфликт бронирования с " + conflicts + ".");
             }
 
-            System.out.println("Вы успешно забронировали место!");
+            System.out.println("Вы успешно забронировали ресурс: " + resourceId + ".");
         }
         catch (DateTimeException exception) {
             System.out.println("Некорректно введена дата.");
@@ -337,7 +298,7 @@ public class EfficientWork {
         LocalDateTime date = LocalDateTime.parse(startDateTimeString);
 
         List<Booking> bookings = bookingService.getAllBookingsByDate(date);
-        System.out.println("----------------Список всех бронирований по данному ресурсу----------------");
+        System.out.println("----------------Список всех бронирований по данной дате----------------");
 
         if (bookings.isEmpty())
             System.out.println("Для данной даты и времени нет еще ни одного бронирования.");
@@ -389,7 +350,7 @@ public class EfficientWork {
         System.out.println("Введите описание рабочего места: ");
         String description = IN.nextLine();
 
-        resourceService.createWorkplace(description);
+        workplaceService.createWorkplace(description);
         System.out.println("Рабочее место успешно добавлено!");
     }
 
@@ -402,7 +363,7 @@ public class EfficientWork {
             System.out.println("Введите ID рабочего места: ");
             String id = IN.nextLine();
 
-            Workplace workplace = resourceService.getWorkplaceById(id);
+            Workplace workplace = workplaceService.getWorkplaceById(id);
 
             if (workplace == null)
                 throw new RuntimeException("Такого рабочего места не существует, попробуйте снова!");
@@ -419,7 +380,7 @@ public class EfficientWork {
 
         System.out.println("Доступные рабочие места: \n");
 
-        List<Workplace> workplaces = resourceService.getAllWorkplaces();
+        List<Workplace> workplaces = workplaceService.getAllWorkplaces();
         for (Workplace workplace : workplaces) {
             System.out.println(workplace + "\n");
         }
@@ -437,7 +398,7 @@ public class EfficientWork {
             System.out.println("Введите новое описание рабочего места: ");
             String description = IN.nextLine();
 
-            if (resourceService.updateWorkplace(id, description) == null) {
+            if (workplaceService.updateWorkplace(id, description) == null) {
                 throw new RuntimeException("Рабочего места с ID: " + id +
                         " не существует.");
             }
@@ -459,7 +420,7 @@ public class EfficientWork {
             System.out.println("Введите ID рабочего места, которое хотите удалить: ");
             String id = IN.nextLine();
 
-            if (resourceService.deleteWorkplace(id) == null)
+            if (workplaceService.deleteWorkplace(id) == null)
                 throw new RuntimeException("Рабочего места с ID: " + id +
                         " не существует.");
 
@@ -482,7 +443,7 @@ public class EfficientWork {
             System.out.println("Введите размер конференц-зала: ");
             int size = Integer.parseInt(IN.nextLine());
 
-            resourceService.createConferenceHall(description, size);
+            hallService.createConferenceHall(description, size);
             System.out.println("Конференц-зал успешно добавлен!");
         }
         catch (NumberFormatException exception) {
@@ -499,7 +460,7 @@ public class EfficientWork {
             System.out.println("Введите ID конференц-зала: ");
             String id = IN.nextLine();
 
-            ConferenceHall conferenceHall = resourceService.getConferenceHallById(id);
+            ConferenceHall conferenceHall = hallService.getConferenceHallById(id);
 
             if (conferenceHall == null)
                 throw new RuntimeException("Такого конференц-зала не существует, попробуйте снова!");
@@ -516,7 +477,7 @@ public class EfficientWork {
 
         System.out.println("Доступные конференц-залы: \n");
 
-        List<ConferenceHall> conferenceHalls = resourceService.getAllConferenceHalls();
+        List<ConferenceHall> conferenceHalls = hallService.getAllConferenceHalls();
         for (ConferenceHall hall : conferenceHalls) {
             System.out.println(hall + "\n");
         }
@@ -538,7 +499,7 @@ public class EfficientWork {
             System.out.println("Введите размер конференц-зала: ");
             int size = Integer.parseInt(IN.nextLine());
 
-            if (resourceService.updateConferenceHall(id, description, size) == null) {
+            if (hallService.updateConferenceHall(id, description, size) == null) {
                 throw new RuntimeException("Конференц-зал с ID: " + id +
                         " не существует.");
             }
@@ -563,7 +524,7 @@ public class EfficientWork {
             System.out.println("Введите ID конференц-зала, который хотите удалить: ");
             String id = IN.nextLine();
 
-            if (resourceService.deleteConferenceHall(id) == null)
+            if (hallService.deleteConferenceHall(id) == null)
                 throw new RuntimeException("Конференц-зал с ID: " + id +
                         " не существует.");
 

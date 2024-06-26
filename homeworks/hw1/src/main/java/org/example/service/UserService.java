@@ -1,6 +1,8 @@
 package org.example.service;
 
 import org.example.entity.User;
+import org.example.repository.UserRepository;
+import org.example.repository.UserRepositoryImpl;
 
 import java.util.*;
 
@@ -10,43 +12,30 @@ import java.util.*;
  **/
 public class UserService {
 
-    private final Map<String, User> users;
+    private UserRepository repository;
 
     public UserService() {
-
-        users = new HashMap<>();
-        User admin = User.builder()
-                .id(UUID.randomUUID())
-                .username("admin")
-                .password("qwerty")
-                .build();
-
-        users.put(admin.getUsername(), admin);
+        repository = new UserRepositoryImpl();
     }
 
     public User addUser(String username, String password) {
 
-        User user = User.builder()
-                .id(UUID.randomUUID())
-                .username(String.valueOf(username))
-                .password(password)
-                .build();
-
-        users.put(username, user);
-        return user;
+        return repository.save(username, password);
     }
 
     public boolean authorizeUser(String username, String password) {
 
-        User foundUser = users.get(username);
+        User foundUser = repository.findByUsername(username);
         return foundUser != null && foundUser.getPassword().equals(password);
     }
 
     public User getUserByUsername(String username) {
-        return users.get(username);
+
+        return repository.findByUsername(username);
     }
 
     public Map<String, User> getAllUsers() {
-        return users;
+
+        return repository.findAll();
     }
 }
