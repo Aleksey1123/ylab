@@ -2,9 +2,13 @@ package org.example.service;
 
 import org.example.entity.Booking;
 import org.example.entity.User;
+import org.example.repository.BookingRepository;
+import org.example.repository.BookingRepositoryImpl;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /** Данный сервис отвечает за работу с сущностью бронирование.
  *  Когда бронируется какой-либо ресурс создаётся и бронирование.
@@ -13,17 +17,16 @@ import java.util.*;
  **/
 public class BookingService {
 
-    // bookingId: booking
-    private final Map<String, Booking> bookings;
+    private BookingRepository repository;
 
     public BookingService() {
-         bookings = new HashMap<>();
+        repository = new BookingRepositoryImpl();
     }
 
     public List<Booking> makeBooking(User user, String resourceId,
                                LocalDateTime startTime, LocalDateTime endTime) {
 
-        List<Booking> conflictList = bookings.values()
+        List<Booking> conflictList = repository.findAllBookings().values()
                 .stream()
                 .filter(b -> b.getResourceId().toString().equals(resourceId) &&
                         b.getStartTime().isBefore(endTime) &&
@@ -39,42 +42,33 @@ public class BookingService {
                 .build();
 
         if (conflictList.isEmpty())
-            bookings.put(booking.getId().toString(), booking);
+            repository.save(booking);
 
         return conflictList;
     }
 
     public boolean cancelBooking(String bookingId) {
 
-        return bookings.remove(bookingId) != null;
+        return repository.deleteById(bookingId) != null;
     }
 
     public List<Booking> getAllBookingsByDate(LocalDateTime date) {
 
-        return bookings.values()
-                .stream()
-                .filter(b -> b.getStartTime().isBefore(date) || b.getEndTime().isAfter(date))
-                .toList();
+        return repository.findAllBookingsByDate(date);
     }
 
     public List<Booking> getAllBookingsByUser(String username) {
 
-        return bookings.values()
-                .stream()
-                .filter(b -> b.getUser().getUsername().equals(username))
-                .toList();
+        return repository.findAllBookingsByUser(username);
     }
 
     public List<Booking> getAllBookingsByResource(String resourceId) {
 
-        return bookings.values()
-                .stream()
-                .filter(b -> b.getResourceId().toString().equals(resourceId))
-                .toList();
+        return repository.findAllBookingsByResource(resourceId);
     }
 
     public List<Booking> getAllBookings() {
 
-        return new ArrayList<>(bookings.values());
+        return new ArrayList<>(repository.findAllBookings().values());
     }
 }
