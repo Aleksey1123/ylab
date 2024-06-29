@@ -14,7 +14,8 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
     private final String resourceType = Resource.HALL.toString();
 
     private Connection getConnection() throws SQLException {
-        String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
+//        String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
+        String url = "jdbc:postgresql://db:5432/efficient_work";
         String user = "root";
         String password = "password";
 

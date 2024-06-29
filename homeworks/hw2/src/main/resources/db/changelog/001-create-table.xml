@@ -4,15 +4,15 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
                    logicalFilePath="db/changelog/changelog.xml">
-
+<!--
     <changeSet id="001-create-schema" author="alex">
         <sql>CREATE SCHEMA service_schema;</sql>
     </changeSet>
-
+-->
     <changeSet id="001-create-table" author="alex">
 
         <!--schemaName="service_schema"-->
-        <createTable tableName="users" schemaName="service_schema">
+        <createTable tableName="users" >
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -25,7 +25,7 @@
         </createTable>
 
         <!--schemaName="service_schema"-->
-        <createTable tableName="conference_halls" schemaName="service_schema">
+        <createTable tableName="conference_halls">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -38,7 +38,7 @@
         </createTable>
 
         <!--schemaName="service_schema"-->
-        <createTable tableName="workplaces" schemaName="service_schema">
+        <createTable tableName="workplaces">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
