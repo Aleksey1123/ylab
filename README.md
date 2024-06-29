@@ -21,3 +21,7 @@
 docker exec -it app java -cp app/app.jar org.example.Main
 ````
 После этого можно взаимодействовать в своём терминале с приложением также, как если бы оно было запущено не в контейнере.
+
+## Ссылки
+- https://github.com/Aleksey1123/ylab/tree/master/homeworks/hw2
+- https://github.com/Aleksey1123/ylab/pull/3
