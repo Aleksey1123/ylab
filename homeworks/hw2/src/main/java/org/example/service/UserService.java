@@ -1,10 +1,9 @@
 package org.example.service;
 
 import org.example.entity.User;
-import org.example.repository.UserRepository;
-import org.example.repository.UserRepositoryImpl;
+import org.example.repository.UserRepositoryJDBC;
 
-import java.util.*;
+import java.util.Map;
 
 /** Данный сервис отвечает за работу с сущностью User. Все пользователи
  * хранятся в HashMap users. В сервисе присутствует конструктор, который инициализирует
@@ -12,10 +11,10 @@ import java.util.*;
  **/
 public class UserService {
 
-    private UserRepository repository;
+    private UserRepositoryJDBC repository;
 
     public UserService() {
-        repository = new UserRepositoryImpl();
+        repository = new UserRepositoryJDBC();
     }
 
     public User addUser(String username, String password) {

@@ -4,6 +4,7 @@ import org.example.command.*;
 import org.example.entity.Booking;
 import org.example.entity.ConferenceHall;
 import org.example.entity.Workplace;
+import org.example.enums.Resource;
 import org.example.service.BookingService;
 import org.example.service.ConferenceHallService;
 import org.example.service.WorkplaceService;
@@ -19,7 +20,6 @@ public class EfficientWork {
 
     private final Scanner IN = new Scanner(System.in);
     private User authorisedUser;
-    private boolean editPanelNotShown = false;
 
     private final UserService userService = new UserService();
     private final BookingService bookingService = new BookingService();
@@ -59,10 +59,8 @@ public class EfficientWork {
      */
     public void startApp() {
 
+        help();
         do {
-            if (!editPanelNotShown)
-                help();
-            editPanelNotShown = false;
             String decision = IN.nextLine();
 
             if (decision.equals("quit"))
@@ -196,8 +194,23 @@ public class EfficientWork {
                 throw new RuntimeException("Для бронирования необходимо сначала войти в систему.");
             }
 
+            String workplaceId = null;
+            String hallId = null;
+
             System.out.print("Введите ID ресурса (рабочего места или конференц-зала): ");
             String resourceId = IN.nextLine();
+
+            System.out.print("Введите тип ресурса (W или H): ");
+            String resourceType = IN.nextLine();
+            if (resourceType.equals("W"))
+                resourceType = Resource.WORKPLACE.toString();
+            else if (resourceType.equals("H"))
+                resourceType = Resource.HALL.toString();
+            else throw new RuntimeException("Incorrect resource type.");
+
+            if (resourceType.equals(Resource.WORKPLACE.toString()))
+                workplaceId = resourceId;
+            else hallId = resourceId;
 
             System.out.print("Введите дату и время начала бронирования (ГГГГ-ММ-ДДTЧЧ:ММ:CC): ");
             String startDateTimeString = IN.nextLine();
@@ -207,7 +220,8 @@ public class EfficientWork {
             String endDateTimeString = IN.nextLine();
             LocalDateTime endTime = LocalDateTime.parse(endDateTimeString);
 
-            List<Booking> conflicts = bookingService.makeBooking(authorisedUser, resourceId, startTime, endTime);
+            List<Booking> conflicts = bookingService.makeBooking(authorisedUser, workplaceId,
+                    hallId, startTime, endTime);
             if (!conflicts.isEmpty()) {
                 throw new RuntimeException("Конфликт бронирования с " + conflicts + ".");
             }
@@ -312,8 +326,9 @@ public class EfficientWork {
     public void printBookings(List<Booking> bookings) {
 
         for (var booking : bookings) {
+            var resourceId = (booking.getHallId() != null) ? booking.getHallId() : booking.getWorkplaceId();
             System.out.println("ID: " + booking.getId() + ",\n" +
-                    "ID ресурса: " + booking.getResourceId() + ",\n" +
+                    "ID ресурса: " + resourceId + ",\n" +
                     "Время: " + booking.getStartTime() + " - " + booking.getEndTime() + ",\n" +
                     "Пользователь: " + booking.getUser().getUsername() + "\n");
             System.out.println("--------------------------------------------------------------------------------------");
@@ -443,8 +458,8 @@ public class EfficientWork {
             System.out.println("Введите размер конференц-зала: ");
             int size = Integer.parseInt(IN.nextLine());
 
-            hallService.createConferenceHall(description, size);
-            System.out.println("Конференц-зал успешно добавлен!");
+            if (hallService.createConferenceHall(description, size) != null)
+                System.out.println("Конференц-зал успешно добавлен!");
         }
         catch (NumberFormatException exception) {
             System.out.println("Размер конференц-зала должен быть целым числом!");
@@ -456,20 +471,13 @@ public class EfficientWork {
      **/
     public void getConferenceHall() {
 
-        try {
-            System.out.println("Введите ID конференц-зала: ");
-            String id = IN.nextLine();
+        System.out.println("Введите ID конференц-зала: ");
+        String id = IN.nextLine();
 
-            ConferenceHall conferenceHall = hallService.getConferenceHallById(id);
+        ConferenceHall conferenceHall = hallService.getConferenceHallById(id);
 
-            if (conferenceHall == null)
-                throw new RuntimeException("Такого конференц-зала не существует, попробуйте снова!");
-
+        if (conferenceHall != null)
             System.out.println("Найденный конференц-зал: " + conferenceHall);
-        }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
-        }
     }
 
     /** Вывод всех конференц-залов на экран с помощью вызова getAllConferenceHalls() у сервиса resourceService. **/
@@ -499,39 +507,24 @@ public class EfficientWork {
             System.out.println("Введите размер конференц-зала: ");
             int size = Integer.parseInt(IN.nextLine());
 
-            if (hallService.updateConferenceHall(id, description, size) == null) {
-                throw new RuntimeException("Конференц-зал с ID: " + id +
-                        " не существует.");
-            }
-
-            System.out.println("Конференц-зал с ID: " + id + " успешно изменен");
+            if (hallService.updateConferenceHall(id, description, size) != null)
+                System.out.println("Конференц-зал с ID: " + id + " успешно изменен");
         }
         catch (NumberFormatException exception) {
             System.out.println("Размер конференц-зала должен быть целым числом!");
         }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
-        }
     }
 
-    /** Удаоение конференц-зала из HashMap conferenceHalls в resourceService с помощью
+    /** Удаление конференц-зала из HashMap conferenceHalls в resourceService с помощью
      * вызова deleteConferenceHall(id) у сервиса resourceService.
      * Метод пробрасывает RuntimeException в случае, если deleteConferenceHall(id) возвращает null.
      **/
     public void deleteConferenceHall() {
 
-        try {
-            System.out.println("Введите ID конференц-зала, который хотите удалить: ");
-            String id = IN.nextLine();
+        System.out.println("Введите ID конференц-зала, который хотите удалить: ");
+        String id = IN.nextLine();
 
-            if (hallService.deleteConferenceHall(id) == null)
-                throw new RuntimeException("Конференц-зал с ID: " + id +
-                        " не существует.");
-
+        if (hallService.deleteConferenceHall(id) != null)
             System.out.println("Конференц-зал с ID: " + id + " успешно удален");
-        }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
-        }
     }
 }

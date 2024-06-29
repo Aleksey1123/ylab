@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: efficient_work
+    ports:
+      - "5432:5432"
+
+  liquibase:
+    image: liquibase/liquibase
+    volumes:
+      - ./changelog:/liquibase/changelog
+    command: --url=jdbc:postgresql://db:5432/efficient_work --changeLogFile=changelog/changelog.xml --username=root --password=password --defaultSchemaName=service_schema update
+#    command: ls -l /liquibase/changelog
+    depends_on:
+      - db
+
+  app:
+    container_name: app
+    stdin_open: true
+    tty: true
+    command: sh
+    volumes:
+      - ./changelog:/liquibase/changelog
+    build:
+      context: .
+      dockerfile: Dockerfile1
+    depends_on:
+      - db
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/efficient_work
+      DB_USERNAME: root
+      DB_PASSWORD: password
+    ports:
+      - "8080:8080"

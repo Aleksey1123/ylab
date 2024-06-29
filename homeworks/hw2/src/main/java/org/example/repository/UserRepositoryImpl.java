@@ -39,6 +39,12 @@ public class UserRepositoryImpl implements UserRepository {
         return users.get(username);
     }
 
+    @Override
+    public User findById(String id) {
+
+        return null;
+    }
+
     public Map<String, User> findAll() {
 
         return users;

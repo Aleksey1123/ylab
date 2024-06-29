@@ -2,8 +2,8 @@ package org.example.service;
 
 import org.example.entity.Booking;
 import org.example.entity.User;
-import org.example.repository.BookingRepository;
-import org.example.repository.BookingRepositoryImpl;
+import org.example.enums.Resource;
+import org.example.repository.BookingRepositoryJDBC;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,35 +17,59 @@ import java.util.UUID;
  **/
 public class BookingService {
 
-    private BookingRepository repository;
+    private BookingRepositoryJDBC repository;
 
     public BookingService() {
-        repository = new BookingRepositoryImpl();
+        repository = new BookingRepositoryJDBC();
     }
 
-    public List<Booking> makeBooking(User user, String resourceId,
-                               LocalDateTime startTime, LocalDateTime endTime) {
+    public List<Booking> makeBooking(User user, String workplaceId, String hallId, LocalDateTime startTime, LocalDateTime endTime) {
+        UUID resourceUUID;
+        String resourceType;
 
-        List<Booking> conflictList = repository.findAllBookings().values()
+        if (workplaceId != null && hallId == null) {
+            resourceUUID = UUID.fromString(workplaceId);
+            resourceType = Resource.WORKPLACE.toString();
+        } else if (hallId != null && workplaceId == null) {
+            resourceUUID = UUID.fromString(hallId);
+            resourceType = Resource.HALL.toString();
+        } else {
+            throw new IllegalArgumentException("Exactly one of workplaceId or hallId must be non-null");
+        }
+
+        List<Booking> conflictList = repository.findAllBookingsByResource(resourceUUID.toString())
                 .stream()
-                .filter(b -> b.getResourceId().toString().equals(resourceId) &&
-                        b.getStartTime().isBefore(endTime) &&
-                        b.getEndTime().isAfter(startTime))
+                .filter(b -> b.getStartTime().isBefore(endTime) && b.getEndTime().isAfter(startTime))
                 .toList();
 
-        Booking booking = Booking.builder()
-                .id(UUID.randomUUID())
-                .resourceId(UUID.fromString(resourceId))
-                .startTime(startTime)
-                .endTime(endTime)
-                .user(user)
-                .build();
+        Booking booking;
+        if (resourceType.equalsIgnoreCase(Resource.WORKPLACE.toString())) {
+            booking = Booking.builder()
+                    .id(UUID.randomUUID())
+                    .workplaceId(resourceUUID)
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .user(user)
+                    .build();
+        } else if (resourceType.equalsIgnoreCase(Resource.HALL.toString())) {
+            booking = Booking.builder()
+                    .id(UUID.randomUUID())
+                    .hallId(resourceUUID)
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .user(user)
+                    .build();
+        } else {
+            throw new IllegalArgumentException("Invalid resource type: " + resourceType);
+        }
 
-        if (conflictList.isEmpty())
+        if (conflictList.isEmpty()) {
             repository.save(booking);
+        }
 
         return conflictList;
     }
+
 
     public boolean cancelBooking(String bookingId) {
 

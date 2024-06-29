@@ -19,7 +19,8 @@ import java.util.UUID;
 public class Booking {
 
     private UUID id;
-    private UUID resourceId;
+    private UUID workplaceId;
+    private UUID hallId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private User user;

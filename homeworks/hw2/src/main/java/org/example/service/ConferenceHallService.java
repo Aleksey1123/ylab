@@ -1,17 +1,16 @@
 package org.example.service;
 
 import org.example.entity.ConferenceHall;
-import org.example.repository.ConferenceHallRepository;
-import org.example.repository.ConferenceHallRepositoryImpl;
+import org.example.repository.ConferenceHallRepositoryJDBC;
 
 import java.util.List;
 
 public class ConferenceHallService {
 
-    private ConferenceHallRepository repository;
+    private ConferenceHallRepositoryJDBC repository;
 
     public ConferenceHallService() {
-        this.repository = new ConferenceHallRepositoryImpl();
+        this.repository = new ConferenceHallRepositoryJDBC();
     }
 
     public ConferenceHall createConferenceHall(String description, int size) {
@@ -30,14 +29,13 @@ public class ConferenceHallService {
 
     public ConferenceHall updateConferenceHall(String id, String description, int size) {
 
-        ConferenceHall conferenceHall = repository.findById(id);
+        ConferenceHall newHall = null;
 
-        if (conferenceHall != null) {
-            conferenceHall.setDescription(description);
-            conferenceHall.setSize(size);
+        if (repository.findById(id) != null) {
+              newHall = repository.update(id, description, size);
         }
 
-        return conferenceHall;
+        return newHall;
     }
 
     public ConferenceHall deleteConferenceHall(String id) {

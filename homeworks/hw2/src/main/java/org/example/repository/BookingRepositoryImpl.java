@@ -48,7 +48,7 @@ public class BookingRepositoryImpl implements BookingRepository {
 
         return bookings.values()
                 .stream()
-                .filter(b -> b.getResourceId().toString().equals(resourceId))
+//                .filter(b -> b.getResourceId().toString().equals(resourceId))
                 .toList();
     }
 

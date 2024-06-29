@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+                   logicalFilePath="db/changelog/changelog.xml">
+    <changeSet id="001-create-table" author="alex">
+
+        <sql>CREATE SCHEMA service_schema;</sql>
+
+        <createTable tableName="users" schemaName="service_schema">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="conference_halls" schemaName="service_schema">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="size" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="workplaces" schemaName="service_schema">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="bookings" schemaName="service_schema">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="workplace_id" type="uuid"/>
+            <column name="conference_hall_id" type="uuid"/>
+            <column name="start_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Constraints -->
+        <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="workplace_id"
+                                 constraintName="fk_bookings_workplace_id"
+                                 referencedTableName="workplaces"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="conference_hall_id"
+                                 constraintName="fk_bookings_conference_hall_id"
+                                 referencedTableName="conference_halls"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="user_id"
+                                 constraintName="fk_bookings_user_id"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

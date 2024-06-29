@@ -1,8 +1,7 @@
 package org.example.service;
 
 import org.example.entity.Workplace;
-import org.example.repository.WorkplaceRepository;
-import org.example.repository.WorkplaceRepositoryImpl;
+import org.example.repository.WorkplaceRepositoryJDBC;
 
 import java.util.List;
 
@@ -14,10 +13,10 @@ import java.util.List;
  **/
 public class WorkplaceService {
 
-    private WorkplaceRepository repository;
+    private WorkplaceRepositoryJDBC repository;
 
     public WorkplaceService() {
-        repository = new WorkplaceRepositoryImpl();
+        repository = new WorkplaceRepositoryJDBC();
     }
 
     // Методы для управления рабочими местами
@@ -38,13 +37,13 @@ public class WorkplaceService {
 
     public Workplace updateWorkplace(String id, String description) {
 
-        Workplace workplace = repository.findById(id);
+        Workplace newWorkplace = null;
 
-        if (workplace != null) {
-            workplace.setDescription(description);
+        if (repository.findById(id) != null) {
+            newWorkplace = repository.update(id, description);
         }
 
-        return workplace;
+        return newWorkplace;
     }
 
     public Workplace deleteWorkplace(String id) {
