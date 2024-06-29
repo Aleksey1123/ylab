@@ -15,7 +15,7 @@ import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.*;
 
-/** Главный класс приложения по сути можно назвать котроллером. **/
+/** The main app class. **/
 public class EfficientWork {
 
     private final Scanner IN = new Scanner(System.in);
@@ -55,7 +55,7 @@ public class EfficientWork {
     }
 
     /**
-     * Бесконечный цикл, который обеспечивает работу консольного приложения.
+     * Infinity loop that keeps the app running
      */
     public void startApp() {
 
@@ -70,95 +70,82 @@ public class EfficientWork {
         } while (true);
     }
 
-    /** Switch выражение, которое перенаправляет работу на отдельные методы. **/
+    /** This method redirects work to individual methods. **/
     public void handleBasicInput(String decision) {
 
        invoker.executeCommand(decision);
     }
 
-    /** Вывод панели с основными командами на экран. **/
+    /**
+     * Output with available console commands.
+     */
     public void help() {
-
         System.out.println("------------------EfficientWork------------------");
-        System.out.println("Добро пожаловать в коворкинг-сервис EfficientWork");
-        System.out.println("Введите ? - вывести всех зарегистрированных пользователей");
-        System.out.println("Введите help - вывести контекстное меню");
-
-        System.out.println("Введите 1 - зарегистрироваться");
-        System.out.println("Введите 2 - войти");
-        System.out.println("Введите 3 - забронировать ресурс (рабочее место или конференц-зал)");
-        System.out.println("Введите 4 - отменить бронирование ресурса (рабочее место или конференц-зал)");
-        System.out.println("Введите 5 - просмотреть все бронирования");
-        System.out.println("Введите 6 - просмотреть все бронирования для конкретного ресурса");
-        System.out.println("Введите 7 - просмотреть все бронирования для конкретного пользователя");
-        System.out.println("Введите 8 - просмотреть все бронирования для конкретной даты");
-        System.out.println("Введите 9 - выйти");
-
-        System.out.println("Введите edit - открыть EditPanel");
-        System.out.println("Введите quit - выйти из программы");
+        System.out.println("Welcome to the EfficientWork co-working service");
+        System.out.println("Enter ? - to print all registered users");
+        System.out.println("Enter help - to print the context menu");
+        System.out.println("Enter 1 - to register");
+        System.out.println("Enter 2 - to log in");
+        System.out.println("Enter 3 - to book a resource (workplace or conference hall)");
+        System.out.println("Enter 4 - to cancel a resource booking (workplace or conference hall)");
+        System.out.println("Enter 5 - to view all bookings");
+        System.out.println("Enter 6 - to view all bookings for a specific resource");
+        System.out.println("Enter 7 - to view all bookings for a specific user");
+        System.out.println("Enter 8 - to view all bookings for a specific date");
+        System.out.println("Enter 9 - to log out");
+        System.out.println("Enter edit - to open EditPanel");
+        System.out.println("Enter quit - to exit the program");
         System.out.println("-------------------------------------------------");
     }
 
-    /** Вывод всех зарегистрированных пользователей с помощью вызова getAllUsers() у соответствующего сервиса. **/
+    /** Output of all registered users. **/
     public void printRegisteredUsers() {
 
         System.out.println(userService.getAllUsers());
     }
 
-    /** Регистрация пользователя с помощью вызова addUser() у соответствующего сервиса.
-     * Метод пробрасывает RuntimeException в случаях: если пользователь под таким именем уже существует,
-     * если имя пользователя пустое, если addUser() возвращает null, что соответствует ошибке регистрации.
-     **/
+    /**
+     * This method provide user registration at the appropriate service.
+     * Method throws a RuntimeException: if a user with this username already exists,
+     * if username is empty, if addUser() returns null, that corresponds to a registration error.
+     */
     public void registerUser() {
 
-        try {
-            System.out.println("Введите имя пользователя: ");
-            String username = IN.nextLine();
+        System.out.println("Enter a username: ");
+        String username = IN.nextLine();
 
-            if (username.isEmpty())
-                throw new RuntimeException("Имя пользователя должно содержать минимум 1 символ.");
+        System.out.println("Enter a password: ");
+        String password = IN.nextLine();
 
-            if (userService.getAllUsers().containsKey(username)) {
-                throw new RuntimeException("Такой пользователь уже существует.\n" +
-                        "Придумайте новое имя пользователя.");
-            }
-
-            System.out.println("Введите пароль: ");
-            String password = IN.nextLine();
-
-            if (userService.addUser(username, password) != null) {
-                System.out.println("Вы успешно зарегестрировались!");
-            }
-            else throw new RuntimeException("Произошла ошибка, попробуйте снова!");
-        }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
+        if (userService.addUser(username, password) != null) {
+            System.out.println("Successful registration!");
         }
     }
 
-    /** Авторизация пользователя с помощью вызова authorizeUser() у соответствующего сервиса.
-     * Метод пробрасывает RuntimeException в случаях: если пользователь уже вошел в систему,
-     * если authorizeUser() возвращает false, что соответствует неверному имени пользователя или паролю.
-     **/
+    /**
+     * Authorize the user by calling authorizeUser() on the corresponding service.
+     * Method throws a RuntimeException in cases: if the user is already logged in,
+     * if authorizeUser() returns false, corresponding to an incorrect username or password.
+     */
     public void authorize() {
 
         try {
             if (authorisedUser != null)
-                throw new RuntimeException("Вы уже вошли в систему под пользователем: " +
+                throw new RuntimeException("You are already logged in as: " +
                         authorisedUser.getUsername() + ".");
 
-            System.out.println("Введите имя пользователя: ");
+            System.out.println("Enter username: ");
             String username = IN.nextLine();
 
-            System.out.println("Введите пароль: ");
+            System.out.println("Enter password: ");
             String password = IN.nextLine();
 
             if (!userService.authorizeUser(username, password)) {
-                throw new RuntimeException("Неверное имя пользователя или пароль, попробуйте ещё раз!");
+                throw new RuntimeException("Incorrect username or password, please try again!");
             }
 
             authorisedUser = userService.getUserByUsername(username);
-            System.out.println("Вы успешно вошли в систему под пользователем: " +
+            System.out.println("Successfully logged in as: " +
                     username + ".");
         }
         catch (RuntimeException exception) {
@@ -166,41 +153,43 @@ public class EfficientWork {
         }
     }
 
-    /** Выход из системы с помощью изменения переменной authorisedUser.
-     * Метод пробрасывает RuntimeException в случае, если пользователь еще не вошел в систему.
-     **/
+    /**
+     * Logout by changing the authorisedUser variable.
+     * Method throws a RuntimeException in case the user is not logged in.
+     */
     public void logOut() {
 
         try {
             if (authorisedUser == null)
-                throw new RuntimeException("Вы еще не вошли в систему!");
+                throw new RuntimeException("You are not logged in!");
 
             authorisedUser = null;
-            System.out.println("Вы успешно вышли из системы.");
+            System.out.println("Successfully logged out.");
         }
         catch (RuntimeException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
-    /** Бронирование ресурса с помощью вызова makeBooking() у сервиса bookingService.
-     * Метод пробрасывает DateTimeException в случае, если некорректно введена дата.
-     * Метод пробрасывает RuntimeException в случаях: если пользователь еще не вошел в систему,
-     * если произошел конфликт бронирования, в случае конфликта makeBooking() возвращает пустой список.
-     **/
+    /**
+     * Booking a resource by calling makeBooking() on the bookingService.
+     * Method throws DateTimeException in case of incorrect date entry.
+     * Method throws a RuntimeException in cases: if the user is not logged in,
+     * if there is a booking conflict, in case of conflict makeBooking() returns an empty list.
+     */
     public void bookResource() {
         try {
             if (authorisedUser == null) {
-                throw new RuntimeException("Для бронирования необходимо сначала войти в систему.");
+                throw new RuntimeException("You must log in before booking.");
             }
 
             String workplaceId = null;
             String hallId = null;
 
-            System.out.print("Введите ID ресурса (рабочего места или конференц-зала): ");
+            System.out.print("Enter resource ID (workplace or conference hall): ");
             String resourceId = IN.nextLine();
 
-            System.out.print("Введите тип ресурса (W или H): ");
+            System.out.print("Enter resource type (W or H): ");
             String resourceType = IN.nextLine();
             if (resourceType.equals("W"))
                 resourceType = Resource.WORKPLACE.toString();
@@ -212,188 +201,195 @@ public class EfficientWork {
                 workplaceId = resourceId;
             else hallId = resourceId;
 
-            System.out.print("Введите дату и время начала бронирования (ГГГГ-ММ-ДДTЧЧ:ММ:CC): ");
+            System.out.print("Enter booking start date and time (YYYY-MM-DDTHH:MM:SS): ");
             String startDateTimeString = IN.nextLine();
             LocalDateTime startTime = LocalDateTime.parse(startDateTimeString);
 
-            System.out.print("Введите дату и время окончания бронирования (ГГГГ-ММ-ДДTЧЧ:ММ:CC): ");
+            System.out.print("Enter booking end date and time (YYYY-MM-DDTHH:MM:SS): ");
             String endDateTimeString = IN.nextLine();
             LocalDateTime endTime = LocalDateTime.parse(endDateTimeString);
 
             List<Booking> conflicts = bookingService.makeBooking(authorisedUser, workplaceId,
                     hallId, startTime, endTime);
             if (!conflicts.isEmpty()) {
-                throw new RuntimeException("Конфликт бронирования с " + conflicts + ".");
+                throw new RuntimeException("Booking conflict with " + conflicts + ".");
             }
 
-            System.out.println("Вы успешно забронировали ресурс: " + resourceId + ".");
+            System.out.println("Successfully booked resource: " + resourceId + ".");
         }
         catch (DateTimeException exception) {
-            System.out.println("Некорректно введена дата.");
+            System.out.println("Incorrect date entered.");
         }
         catch (RuntimeException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
-    /** Отмена бронирования ресурса с помощью вызова cancelBooking() у сервиса bookingService.
-     * Метод пробрасывает RuntimeException в случае, если неверно введено ID бронирования.
-     **/
+    /**
+     * Cancel booking by calling cancelBooking() on the bookingService.
+     * Method throws a RuntimeException in case of incorrect booking ID.
+     */
     public void cancelBooking() {
 
         try {
-            System.out.print("Введите ID бронирования для отмены: ");
+            System.out.print("Enter booking ID to cancel: ");
             String bookingId = IN.nextLine();
 
             if (!bookingService.cancelBooking(bookingId)) {
-                throw new RuntimeException("Неверное ID бронирования, попробуйте снова.");
+                throw new RuntimeException("Incorrect booking ID, please try again.");
             }
 
-            System.out.println("Успешная отмена бронирования под ID: " + bookingId);
+            System.out.println("Successfully cancelled booking with ID: " + bookingId);
         }
         catch (RuntimeException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
-    /** Вывод всех существующих бронирований на экран с помощью вызова printBookings(). **/
+    /**
+     * Display all existing bookings on the screen by calling printBookings().
+     */
     public void viewAllBookings() {
 
         List<Booking> bookings = bookingService.getAllBookings();
-        System.out.println("----------------Список всех бронирований----------------");
+        System.out.println("----------------List of all bookings----------------");
 
         if (bookings.isEmpty())
-            System.out.println("Пока ещё нет ни единого бронирования.");
+            System.out.println("There are no bookings yet.");
 
         printBookings(bookings);
     }
 
-    /** Вывод всех существующих бронирований отфильтрованных по пользователю на экран с помощью вызова printBookings()
-     *  и вызова getAllBookingsByUser() у сервиса bookingService.
-     **/
+    /**
+     * Display all existing bookings filtered by user on the screen by calling printBookings()
+     * and getAllBookingsByUser() on the bookingService.
+     */
     public void viewAllBookingsFilteredByUser() {
 
-        System.out.println("Введите имя пользователя для фильтрации: ");
+        System.out.println("Enter username to filter: ");
         String username = IN.nextLine();
 
         List<Booking> bookings = bookingService.getAllBookingsByUser(username);
-        System.out.println("----------------Список всех бронирований по данному пользователю----------------");
+        System.out.println("----------------List of all bookings for this user----------------");
 
         if (bookings.isEmpty())
-            System.out.println("Для данного пользователя пока ещё нет ни единого бронирования.");
+            System.out.println("There are no bookings for this user yet.");
 
         printBookings(bookings);
     }
 
-    /** Вывод всех существующих бронирований отфильтрованных по ресурсу на экран с помощью вызова printBookings()
-     *  и вызова getAllBookingsByResource() у сервиса bookingService.
-     **/
+    /**
+     * Display all existing bookings filtered by resource on the screen by calling printBookings()
+     * and getAllBookingsByResource() on the bookingService.
+     */
     public void viewAllBookingsFilteredByResource() {
 
-        System.out.println("Введите ID ресурса для фильтрации: ");
+        System.out.println("Enter resource ID to filter: ");
         String resourceId = IN.nextLine();
 
         List<Booking> bookings = bookingService.getAllBookingsByResource(resourceId);
-        System.out.println("----------------Список всех бронирований по данному ресурсу----------------");
+        System.out.println("----------------List of all bookings for this resource----------------");
 
         if (bookings.isEmpty())
-            System.out.println("Для данного ресурса пока ещё нет ни единого бронирования.");
+            System.out.println("There are no bookings for this resource yet.");
 
         printBookings(bookings);
     }
 
-    /** Вывод всех существующих бронирований отфильтрованных по дате на экран с помощью вызова printBookings()
-     *  и вызова getAllBookingsByDate() у сервиса bookingService.
-     **/
+    /**
+     * Display all existing bookings filtered by date on the screen by calling printBookings()
+     * and getAllBookingsByDate() on the bookingService.
+     */
     public void viewAllBookingsFilteredByDate() {
 
-        System.out.print("Введите дату и время для фильтрации (ГГГГ-ММ-ДДTЧЧ:ММ:CC): ");
+        System.out.print("Enter date and time to filter (YYYY-MM-DDTHH:MM:SS): ");
         String startDateTimeString = IN.nextLine();
         LocalDateTime date = LocalDateTime.parse(startDateTimeString);
 
         List<Booking> bookings = bookingService.getAllBookingsByDate(date);
-        System.out.println("----------------Список всех бронирований по данной дате----------------");
+        System.out.println("----------------List of all bookings for this date----------------");
 
         if (bookings.isEmpty())
-            System.out.println("Для данной даты и времени нет еще ни одного бронирования.");
+            System.out.println("There are no bookings for this date and time yet.");
 
         printBookings(bookings);
     }
 
-    /** Вывод всех существующих бронирований на экран. Функция принимает один параметр
-     *  - список всех бпронирований.
-     **/
+    /**
+     * Display all existing bookings on the screen. The function accepts one parameter
+     * - list of all bookings.
+     */
     public void printBookings(List<Booking> bookings) {
 
         for (var booking : bookings) {
             var resourceId = (booking.getHallId() != null) ? booking.getHallId() : booking.getWorkplaceId();
             System.out.println("ID: " + booking.getId() + ",\n" +
-                    "ID ресурса: " + resourceId + ",\n" +
-                    "Время: " + booking.getStartTime() + " - " + booking.getEndTime() + ",\n" +
-                    "Пользователь: " + booking.getUser().getUsername() + "\n");
+                    "Resource ID: " + resourceId + ",\n" +
+                    "Booking start time - end time: " + booking.getStartTime() + " - " + booking.getEndTime() + ",\n" +
+                    "Username: " + booking.getUser().getUsername() + "\n");
             System.out.println("--------------------------------------------------------------------------------------");
         }
     }
 
-    /** Вывод панели с командами редактирования ресурсов на экран. **/
+    /** Displays the panel with resource editing commands on the screen. **/
     public void showEditMenu() {
 
         System.out.println("------------------EditPanel------------------");
-        System.out.println("Введите help - вывести контекстное меню");
+        System.out.println("Enter help - display the context menu");
 
-        System.out.println("Введите cw - создать новое рабочее место");
-        System.out.println("Введите gw - вывести существующее рабочее место");
-        System.out.println("Введите gaw - вывести все существующие рабочие места");
-        System.out.println("Введите uw - изменить существующее рабочее место");
-        System.out.println("Введите dw - удалить существующее рабочее место");
+        System.out.println("Enter cw - create a new workplace");
+        System.out.println("Enter gw - display an existing workplace");
+        System.out.println("Enter gaw - display all existing workplaces");
+        System.out.println("Enter uw - update an existing workplace");
+        System.out.println("Enter dw - delete an existing workplace");
 
-        System.out.println("Введите ch - создать новый конференц-зал");
-        System.out.println("Введите gh - вывести существующий конференц-зал");
-        System.out.println("Введите gah - вывести все существующие конференц-залы");
-        System.out.println("Введите uh - изменить существующий конференц-зал");
-        System.out.println("Введите dh - удалить существующий конференц-зал");
+        System.out.println("Enter ch - create a new conference hall");
+        System.out.println("Enter gh - display an existing conference hall");
+        System.out.println("Enter gah - display all existing conference halls");
+        System.out.println("Enter uh - update an existing conference hall");
+        System.out.println("Enter dh - delete an existing conference hall");
 
-        System.out.println("Введите quit - выйти из программы");
+        System.out.println("Enter quit - exit the program");
         System.out.println("---------------------------------------------");
     }
 
-    /** Создание рабочего места с помощью вызова createWorkplace() у сервиса resourceService.
-     * Все рабочие места хранятся в HashMap workplaces внутри сервиса resourceService.
+    /** Creates a workplace using the createWorkplace() method of the resourceService.
+     * All workplaces are stored in a HashMap workplaces within the resourceService.
      **/
     public void createWorkplace() {
 
-        System.out.println("Введите описание рабочего места: ");
+        System.out.println("Enter workplace description: ");
         String description = IN.nextLine();
 
         workplaceService.createWorkplace(description);
-        System.out.println("Рабочее место успешно добавлено!");
+        System.out.println("Workplace successfully added!");
     }
 
-    /** Вывод рабочего места на экран с помощью вызова getWorkplaceById(id) у сервиса resourceService.
-     * Метод пробрасывает RuntimeException в случае, если getWorkplaceById(id) возвращает null.
+    /** Displays a workplace on the screen using the getWorkplaceById(id) method of the resourceService.
+     * Throws a RuntimeException if getWorkplaceById(id) returns null.
      **/
     public void getWorkplace() {
 
         try {
-            System.out.println("Введите ID рабочего места: ");
+            System.out.println("Enter workplace ID: ");
             String id = IN.nextLine();
 
             Workplace workplace = workplaceService.getWorkplaceById(id);
 
             if (workplace == null)
-                throw new RuntimeException("Такого рабочего места не существует, попробуйте снова!");
+                throw new RuntimeException("No such workplace exists, please try again!");
 
-            System.out.println("Найденное рабочее место: " + workplace);
+            System.out.println("Found workplace: " + workplace);
         }
         catch (RuntimeException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
-    /** Вывод всех рабочих мест на экран с помощью вызова getAllWorkplaces() у сервиса resourceService. **/
+    /** Displays all workplaces on the screen using the getAllWorkplaces() method of the resourceService. **/
     public void getAllWorkPlaces() {
 
-        System.out.println("Доступные рабочие места: \n");
+        System.out.println("Available workplaces: \n");
 
         List<Workplace> workplaces = workplaceService.getAllWorkplaces();
         for (Workplace workplace : workplaces) {
@@ -401,89 +397,86 @@ public class EfficientWork {
         }
     }
 
-    /** Изменение рабочего места с помощью вызова updateWorkplace(id,description) у сервиса resourceService.
-     * Метод пробрасывает RuntimeException в случае, если updateWorkplace(id,description) возвращает null.
+    /** Updates a workplace using the updateWorkplace(id,description) method of the resourceService.
+     * Throws a RuntimeException if updateWorkplace(id,description) returns null.
      **/
     public void updateWorkplace() {
 
         try {
-            System.out.println("Введите ID рабочего места, которое хотите изменить: ");
+            System.out.println("Enter the ID of the workplace you want to update: ");
             String id = IN.nextLine();
 
-            System.out.println("Введите новое описание рабочего места: ");
+            System.out.println("Enter the new workplace description: ");
             String description = IN.nextLine();
 
             if (workplaceService.updateWorkplace(id, description) == null) {
-                throw new RuntimeException("Рабочего места с ID: " + id +
-                        " не существует.");
+                throw new RuntimeException("Workplace with ID: " + id + " does not exist.");
             }
 
-            System.out.println("Рабочее место с ID: " + id + " успешно изменено");
+            System.out.println("Workplace with ID: " + id + " successfully updated");
         }
         catch (RuntimeException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
-    /** Удаоение рабочего места из HashMap в resourceService с помощью
-     * вызова deleteWorkplace(id) у сервиса resourceService.
-     * Метод пробрасывает RuntimeException в случае, если deleteWorkplace(id) возвращает null.
+    /** Deletes a workplace from the HashMap in resourceService using the deleteWorkplace(id) method of the resourceService.
+     * Throws a RuntimeException if deleteWorkplace(id) returns null.
      **/
     public void deleteWorkplace() {
 
         try {
-            System.out.println("Введите ID рабочего места, которое хотите удалить: ");
+            System.out.println("Enter the ID of the workplace you want to delete: ");
             String id = IN.nextLine();
 
             if (workplaceService.deleteWorkplace(id) == null)
-                throw new RuntimeException("Рабочего места с ID: " + id +
-                        " не существует.");
+                throw new RuntimeException("Workplace with ID: " + id + " does not exist.");
 
-            System.out.println("Рабочее место с ID: " + id + " успешно удалено");
+            System.out.println("Workplace with ID: " + id + " successfully deleted");
         }
         catch (RuntimeException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
-    /** Создание конференц-зала с помощью вызова createConferenceHall() у сервиса resourceService.
-     * Все конференц-залы хранятся в HashMap conferenceHalls внутри сервиса resourceService.
+    /** Creates a conference hall using the createConferenceHall() method of the resourceService.
+     * All conference halls are stored in a HashMap conferenceHalls within the resourceService.
      **/
     public void createConferenceHall() {
 
         try {
-            System.out.println("Введите описание конференц-зала: ");
+            System.out.println("Enter conference hall description: ");
             String description = IN.nextLine();
 
-            System.out.println("Введите размер конференц-зала: ");
+            System.out.println("Enter conference hall size: ");
             int size = Integer.parseInt(IN.nextLine());
 
             if (hallService.createConferenceHall(description, size) != null)
-                System.out.println("Конференц-зал успешно добавлен!");
+                System.out.println("Conference hall successfully added!");
         }
         catch (NumberFormatException exception) {
-            System.out.println("Размер конференц-зала должен быть целым числом!");
+            System.out.println("Conference hall size must be an integer!");
         }
     }
 
-    /** Вывод конференц-зала на экран с помощью вызова getConferenceHallById(id) у сервиса resourceService.
-     * Метод пробрасывает RuntimeException в случае, если getConferenceHallById(id) возвращает null.
+    /** Displays a conference hall on the screen using the getConferenceHallById(id) method of the resourceService.
+     * Throws a RuntimeException if getConferenceHallById(id) returns null.
      **/
     public void getConferenceHall() {
 
-        System.out.println("Введите ID конференц-зала: ");
+        System.out.println("Enter conference hall ID: ");
         String id = IN.nextLine();
 
         ConferenceHall conferenceHall = hallService.getConferenceHallById(id);
 
         if (conferenceHall != null)
-            System.out.println("Найденный конференц-зал: " + conferenceHall);
+            System.out.println("Found conference hall: " + conferenceHall);
     }
 
-    /** Вывод всех конференц-залов на экран с помощью вызова getAllConferenceHalls() у сервиса resourceService. **/
+    /** Displays all conference halls on the screen using the getAllConferenceHalls() method of the resourceService. **/
     public void getAllConferenceHalls() {
 
-        System.out.println("Доступные конференц-залы: \n");
+        System.out.println("Available conference halls: \n");
 
         List<ConferenceHall> conferenceHalls = hallService.getAllConferenceHalls();
         for (ConferenceHall hall : conferenceHalls) {
@@ -491,40 +484,39 @@ public class EfficientWork {
         }
     }
 
-    /** Изменение конференц-зала с помощью вызова updateConferenceHall(id,description,size) у сервиса resourceService.
-     * Метод пробрасывает NumberFormatException в случае, если некорректно введен размер зала.
-     * Метод пробрасывает RuntimeException в случае, если updateConferenceHall(id,description,size) возвращает null.
+    /** Updates a conference hall using the updateConferenceHall(id,description,size) method of the resourceService.
+     * Throws a NumberFormatException if the hall size is incorrectly entered.
+     * Throws a RuntimeException if updateConferenceHall(id,description,size) returns null.
      **/
     public void updateConferenceHall() {
 
         try {
-            System.out.println("Введите ID конференц-зала, который хотите изменить: ");
+            System.out.println("Enter the ID of the conference hall you want to update: ");
             String id = IN.nextLine();
 
-            System.out.println("Введите новое описание конференц-зала: ");
+            System.out.println("Enter the new conference hall description: ");
             String description = IN.nextLine();
 
-            System.out.println("Введите размер конференц-зала: ");
+            System.out.println("Enter conference hall size: ");
             int size = Integer.parseInt(IN.nextLine());
 
             if (hallService.updateConferenceHall(id, description, size) != null)
-                System.out.println("Конференц-зал с ID: " + id + " успешно изменен");
+                System.out.println("Conference hall with ID: " + id + " successfully updated");
         }
         catch (NumberFormatException exception) {
-            System.out.println("Размер конференц-зала должен быть целым числом!");
+            System.out.println("Conference hall size must be an integer!");
         }
     }
 
-    /** Удаление конференц-зала из HashMap conferenceHalls в resourceService с помощью
-     * вызова deleteConferenceHall(id) у сервиса resourceService.
-     * Метод пробрасывает RuntimeException в случае, если deleteConferenceHall(id) возвращает null.
+    /** Deletes a conference hall from the HashMap conferenceHalls in resourceService using the deleteConferenceHall(id) method of the resourceService.
+     * Throws a RuntimeException if deleteConferenceHall(id) returns null.
      **/
     public void deleteConferenceHall() {
 
-        System.out.println("Введите ID конференц-зала, который хотите удалить: ");
+        System.out.println("Enter the ID of the conference hall you want to delete: ");
         String id = IN.nextLine();
 
         if (hallService.deleteConferenceHall(id) != null)
-            System.out.println("Конференц-зал с ID: " + id + " успешно удален");
+            System.out.println("Conference hall with ID: " + id + " successfully deleted");
     }
 }

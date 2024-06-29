@@ -12,6 +12,7 @@ import java.util.Map;
 public class UserService {
 
     private UserRepositoryJDBC repository;
+    private User authorisedUser;
 
     public UserService() {
         repository = new UserRepositoryJDBC();
@@ -19,7 +20,23 @@ public class UserService {
 
     public User addUser(String username, String password) {
 
-        return repository.save(username, password);
+        try {
+            if (username.isEmpty())
+                throw new RuntimeException("Username must be not empty.");
+
+            if (repository.findAll().containsKey(username)) {
+                throw new RuntimeException("Such username already exists.\n" +
+                        "Enter a new username.");
+            }
+
+//            else throw new RuntimeException("An error occurred, try again!");
+            return repository.save(username, password);
+        }
+        catch (RuntimeException exception) {
+            System.out.println(exception.getMessage());
+        }
+
+        return null;
     }
 
     public boolean authorizeUser(String username, String password) {
