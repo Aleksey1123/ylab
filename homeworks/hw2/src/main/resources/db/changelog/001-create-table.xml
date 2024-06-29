@@ -4,10 +4,14 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
                    logicalFilePath="db/changelog/changelog.xml">
+
+    <changeSet id="001-create-schema" author="alex">
+        <sql>CREATE SCHEMA service_schema;</sql>
+    </changeSet>
+
     <changeSet id="001-create-table" author="alex">
 
-        <sql>CREATE SCHEMA service_schema;</sql>
-
+        <!--schemaName="service_schema"-->
         <createTable tableName="users" schemaName="service_schema">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
@@ -20,6 +24,7 @@
             </column>
         </createTable>
 
+        <!--schemaName="service_schema"-->
         <createTable tableName="conference_halls" schemaName="service_schema">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
@@ -32,6 +37,7 @@
             </column>
         </createTable>
 
+        <!--schemaName="service_schema"-->
         <createTable tableName="workplaces" schemaName="service_schema">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
@@ -41,7 +47,8 @@
             </column>
         </createTable>
 
-        <createTable tableName="bookings" schemaName="service_schema">
+        <!--schemaName="service_schema"-->
+        <createTable tableName="bookings" >
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -58,6 +65,7 @@
             </column>
         </createTable>
 
+        <!-- referencedTableSchemaName="service_schema" -->
         <!-- Constraints -->
         <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="workplace_id"
                                  constraintName="fk_bookings_workplace_id"

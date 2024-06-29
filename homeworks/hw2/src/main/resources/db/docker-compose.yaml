@@ -15,7 +15,7 @@ services:
     image: liquibase/liquibase
     volumes:
       - ./changelog:/liquibase/changelog
-    command: --url=jdbc:postgresql://db:5432/efficient_work --changeLogFile=changelog/changelog.xml --username=root --password=password --defaultSchemaName=service_schema update
+    command: --url=jdbc:postgresql://db:5432/efficient_work --changeLogFile=changelog/changelog.xml --username=root --password=password update
 #    command: ls -l /liquibase/changelog
     depends_on:
       - db
