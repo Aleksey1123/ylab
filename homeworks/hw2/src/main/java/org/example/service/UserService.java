@@ -5,10 +5,7 @@ import org.example.repository.UserRepositoryJDBC;
 
 import java.util.Map;
 
-/** Данный сервис отвечает за работу с сущностью User. Все пользователи
- * хранятся в HashMap users. В сервисе присутствует конструктор, который инициализирует
- * HashMap users и создаёт пользователя admin для тестов.
- **/
+/** This service corresponds for work with User Entities. **/
 public class UserService {
 
     private UserRepositoryJDBC repository;

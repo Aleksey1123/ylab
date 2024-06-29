@@ -10,11 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/** Данный сервис отвечает за работу с сущностью бронирование.
- *  Когда бронируется какой-либо ресурс создаётся и бронирование.
- *  Все бронирования хранятся в HashMap bookings (хранятся как <bookingId, booking>).
- *  В сервисе присутствует конструктор, который инициализирует HashMap bookings.
- **/
+
+/** This service corresponds for work with Bookings Entities. **/
 public class BookingService {
 
     private BookingRepositoryJDBC repository;

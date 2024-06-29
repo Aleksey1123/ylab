@@ -5,7 +5,7 @@ import org.example.repository.WorkplaceRepositoryJDBC;
 
 import java.util.List;
 
-/** Данный сервис отвечает за работу с сущностями Workplace. **/
+/** This service corresponds for work with Workplace Entities. **/
 public class WorkplaceService {
 
     private WorkplaceRepositoryJDBC repository;

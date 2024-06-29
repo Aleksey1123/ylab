@@ -5,6 +5,7 @@ import org.example.repository.ConferenceHallRepositoryJDBC;
 
 import java.util.List;
 
+/** This service corresponds for work with ConferenceHall Entities. **/
 public class ConferenceHallService {
 
     private ConferenceHallRepositoryJDBC repository;
