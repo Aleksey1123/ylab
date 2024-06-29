@@ -12,3 +12,9 @@
 ## Ссылки
 - https://github.com/Aleksey1123/ylab/tree/master/homeworks/hw1
 - https://github.com/Aleksey1123/ylab/pull/2
+
+# ДЗ №2
+
+## Как пользоваться приложением
+  В папке проекта по пути src/main/resources/db лежит docker-compose-файл - его нужно запустить. Он создаст три контейнера: bd - в нём лежит postgres, app - в нём лежит сам jar-файл, liquibase - в нём находятся миграции. Так как приложение консольное, то чтобы взаимодействовать с ним в docker-контейнере нужно ввести команду: 
+{ docker exec -it app java -cp app/app.jar org.example.Main }
