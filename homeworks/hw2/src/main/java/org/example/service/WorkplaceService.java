@@ -5,12 +5,7 @@ import org.example.repository.WorkplaceRepositoryJDBC;
 
 import java.util.List;
 
-/** Данный сервис отвечает за работу с сущностями Workplace и ConferenceHall(Ресурсы).
- *  Все рабочие места хранятся в HashMap workplaces (хранятся как <workplaceId, workplace>).
- *  Все конференц-залы хранятся в HashMap conferenceHalls (хранятся как <hallId, conferenceHall>).
- *  В сервисе присутствует конструктор, который инициализирует обе HashMap
- *  и создаёт одно рабочее место и конференц-зал.
- **/
+/** Данный сервис отвечает за работу с сущностями Workplace. **/
 public class WorkplaceService {
 
     private WorkplaceRepositoryJDBC repository;

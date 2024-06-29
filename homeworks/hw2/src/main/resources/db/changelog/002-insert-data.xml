@@ -4,39 +4,41 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
                    logicalFilePath="db/changelog/changelog.xml">
+
     <changeSet id="002-insert-data" author="alex">
-        <insert tableName="users">
+        <insert schemaName="service_schema" tableName="users">
             <column name="id" value="524fb02f-085b-4874-b156-3269451a6769"/>
             <column name="username" value="admin"/>
             <column name="password" value="qwerty"/>
         </insert>
 
-        <insert tableName="users">
+        <insert schemaName="service_schema" tableName="users">
             <column name="id" value="a05a284e-5b85-440e-8ab0-0eb8d2ae3383"/>
             <column name="username" value="user"/>
             <column name="password" value="123"/>
         </insert>
 
-        <insert tableName="workplaces">
+        <insert schemaName="service_schema" tableName="workplaces">
             <column name="id" value="dd356356-c498-4bd2-9103-ee345484b126"/>
             <column name="description" value="test1"/>
         </insert>
 
-        <insert tableName="workplaces">
+        <insert schemaName="service_schema" tableName="workplaces">
             <column name="id" value="01124d68-30a6-4893-9cf5-71bddc52b94d"/>
             <column name="description" value="test2"/>
         </insert>
 
-        <insert tableName="conference_halls">
+        <insert schemaName="service_schema" tableName="conference_halls">
             <column name="id" value="372925fd-5651-4d77-b101-d522ebc44be1"/>
             <column name="description" value="test1"/>
             <column name="size" value="10"/>
         </insert>
 
-        <insert tableName="conference_halls">
+        <insert schemaName="service_schema" tableName="conference_halls">
             <column name="id" value="26b561c8-6cdc-44e9-a966-874e03b96737"/>
             <column name="description" value="test2"/>
             <column name="size" value="50"/>
         </insert>
     </changeSet>
+
 </databaseChangeLog>

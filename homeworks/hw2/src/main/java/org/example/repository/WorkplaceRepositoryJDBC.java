@@ -15,7 +15,7 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
 
     private Connection getConnection() throws SQLException {
 //        String url = "jdbc:postgresql://db:5432/efficient_work";
-        String url = "jdbc:postgresql://db:5432/efficient_work";
+        String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
         String user = "root";
         String password = "password";
 

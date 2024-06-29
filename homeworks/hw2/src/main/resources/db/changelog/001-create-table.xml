@@ -1,18 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
-                   logicalFilePath="db/changelog/changelog.xml">
-<!--
-    <changeSet id="001-create-schema" author="alex">
-        <sql>CREATE SCHEMA service_schema;</sql>
-    </changeSet>
--->
-    <changeSet id="001-create-table" author="alex">
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-        <!--schemaName="service_schema"-->
-        <createTable tableName="users" >
+    <changeSet id="001-create-schema" author="alex">
+        <sql>CREATE SCHEMA IF NOT EXISTS service_schema;</sql>
+    </changeSet>
+
+    <changeSet id="002-create-users-table" author="alex">
+        <createTable schemaName="service_schema" tableName="users">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -23,9 +20,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
 
-        <!--schemaName="service_schema"-->
-        <createTable tableName="conference_halls">
+    <changeSet id="003-create-conference-halls-table" author="alex">
+        <createTable schemaName="service_schema" tableName="conference_halls">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -36,9 +34,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
 
-        <!--schemaName="service_schema"-->
-        <createTable tableName="workplaces">
+    <changeSet id="004-create-workplaces-table" author="alex">
+        <createTable schemaName="service_schema" tableName="workplaces">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -46,9 +45,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
 
-        <!--schemaName="service_schema"-->
-        <createTable tableName="bookings" >
+    <changeSet id="005-create-bookings-table" author="alex">
+        <createTable schemaName="service_schema" tableName="bookings">
             <column name="id" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -64,22 +64,28 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
 
-        <!-- referencedTableSchemaName="service_schema" -->
-        <!-- Constraints -->
+    <changeSet id="006-add-foreign-key-constraints" author="alex">
         <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="workplace_id"
                                  constraintName="fk_bookings_workplace_id"
                                  referencedTableName="workplaces"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id"
+                                 baseTableSchemaName="service_schema"
+                                 referencedTableSchemaName="service_schema"/>
 
         <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="conference_hall_id"
                                  constraintName="fk_bookings_conference_hall_id"
                                  referencedTableName="conference_halls"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id"
+                                 baseTableSchemaName="service_schema"
+                                 referencedTableSchemaName="service_schema"/>
 
         <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="user_id"
                                  constraintName="fk_bookings_user_id"
                                  referencedTableName="users"
-                                 referencedColumnNames="id"/>
+                                 referencedColumnNames="id"
+                                 baseTableSchemaName="service_schema"
+                                 referencedTableSchemaName="service_schema"/>
     </changeSet>
 </databaseChangeLog>

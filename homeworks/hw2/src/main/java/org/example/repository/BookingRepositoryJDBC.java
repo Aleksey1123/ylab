@@ -19,8 +19,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
 
     private Connection getConnection() throws SQLException {
 
-//        String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
-        String url = "jdbc:postgresql://db:5432/efficient_work";
+        String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
+//        String url = "jdbc:postgresql://db:5432/efficient_work";
         String user = "root";
         String password = "password";
 
