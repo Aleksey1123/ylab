@@ -86,9 +86,20 @@ public class UserService {
         return false;
     }
 
+    public User isAuthorised() {
+
+        return authorisedUser;
+    }
+
     /** Outputs all registered users. **/
     public Map<String, User> getAllUsers() {
 
         return repository.findAll();
+    }
+
+    /** Outputs the user. **/
+    public User findUserByUsername(String username) {
+
+        return repository.findByUsername(username);
     }
 }

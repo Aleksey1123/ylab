@@ -3,26 +3,23 @@ package org.example.app;
 import org.example.command.*;
 import org.example.entity.Booking;
 import org.example.entity.ConferenceHall;
+import org.example.entity.User;
 import org.example.entity.Workplace;
-import org.example.enums.Resource;
 import org.example.service.BookingService;
 import org.example.service.ConferenceHallService;
-import org.example.service.WorkplaceService;
 import org.example.service.UserService;
-import org.example.entity.User;
+import org.example.service.WorkplaceService;
 
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Scanner;
 
 /** The main app class. **/
 public class EfficientWork {
 
     private final Scanner IN = new Scanner(System.in);
-    private User authorisedUser;
 
     private final UserService userService = new UserService();
-    private final BookingService bookingService = new BookingService();
+    private final BookingService bookingService = new BookingService(userService);
     private final WorkplaceService workplaceService = new WorkplaceService();
     private final ConferenceHallService hallService = new ConferenceHallService();
 
@@ -139,79 +136,37 @@ public class EfficientWork {
             System.out.println("Successfully logged out.");
     }
 
-    /**
-     * Booking a resource by calling makeBooking() on the bookingService.
-     * Method throws DateTimeException in case of incorrect date entry.
-     * Method throws a RuntimeException in cases: if the user is not logged in,
-     * if there is a booking conflict, in case of conflict makeBooking() returns an empty list.
-     */
+    /** Booking a resource by calling makeBooking() on the bookingService. **/
     public void bookResource() {
-        try {
-            if (authorisedUser == null) {
-                throw new RuntimeException("You must log in before booking.");
-            }
 
-            String workplaceId = null;
-            String hallId = null;
+        System.out.print("Enter resource ID (workplace or conference hall): ");
+        String resourceId = IN.nextLine();
 
-            System.out.print("Enter resource ID (workplace or conference hall): ");
-            String resourceId = IN.nextLine();
+        System.out.print("Enter resource type (W or H): ");
+        String resourceType = IN.nextLine();
 
-            System.out.print("Enter resource type (W or H): ");
-            String resourceType = IN.nextLine();
-            if (resourceType.equals("W"))
-                resourceType = Resource.WORKPLACE.toString();
-            else if (resourceType.equals("H"))
-                resourceType = Resource.HALL.toString();
-            else throw new RuntimeException("Incorrect resource type.");
+        System.out.print("Enter booking start date and time (YYYY-MM-DDTHH:MM:SS): ");
+        String startDateTimeString = IN.nextLine();
 
-            if (resourceType.equals(Resource.WORKPLACE.toString()))
-                workplaceId = resourceId;
-            else hallId = resourceId;
+        System.out.print("Enter booking end date and time (YYYY-MM-DDTHH:MM:SS): ");
+        String endDateTimeString = IN.nextLine();
 
-            System.out.print("Enter booking start date and time (YYYY-MM-DDTHH:MM:SS): ");
-            String startDateTimeString = IN.nextLine();
-            LocalDateTime startTime = LocalDateTime.parse(startDateTimeString);
-
-            System.out.print("Enter booking end date and time (YYYY-MM-DDTHH:MM:SS): ");
-            String endDateTimeString = IN.nextLine();
-            LocalDateTime endTime = LocalDateTime.parse(endDateTimeString);
-
-            List<Booking> conflicts = bookingService.makeBooking(authorisedUser, workplaceId,
-                    hallId, startTime, endTime);
-            if (!conflicts.isEmpty()) {
-                throw new RuntimeException("Booking conflict with " + conflicts + ".");
-            }
-
+        if (bookingService.makeBooking(resourceId,
+                resourceType, startDateTimeString, endDateTimeString))
             System.out.println("Successfully booked resource: " + resourceId + ".");
-        }
-        catch (DateTimeException exception) {
-            System.out.println("Incorrect date entered.");
-        }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
-        }
+        else System.out.println("There is a conflict with an existing booking at this resource.");
     }
 
     /**
-     * Cancel booking by calling cancelBooking() on the bookingService.
-     * Method throws a RuntimeException in case of incorrect booking ID.
+     * Cancels booking by calling cancelBooking() on the bookingService.
      */
     public void cancelBooking() {
 
-        try {
-            System.out.print("Enter booking ID to cancel: ");
-            String bookingId = IN.nextLine();
+        System.out.print("Enter booking ID to cancel: ");
+        String bookingId = IN.nextLine();
 
-            if (!bookingService.cancelBooking(bookingId)) {
-                throw new RuntimeException("Incorrect booking ID, please try again.");
-            }
-
+        if (!bookingService.cancelBooking(bookingId))
             System.out.println("Successfully cancelled booking with ID: " + bookingId);
-        }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
-        }
     }
 
     /**
@@ -272,9 +227,8 @@ public class EfficientWork {
 
         System.out.print("Enter date and time to filter (YYYY-MM-DDTHH:MM:SS): ");
         String startDateTimeString = IN.nextLine();
-        LocalDateTime date = LocalDateTime.parse(startDateTimeString);
 
-        List<Booking> bookings = bookingService.getAllBookingsByDate(date);
+        List<Booking> bookings = bookingService.getAllBookingsByDate(startDateTimeString);
         System.out.println("----------------List of all bookings for this date----------------");
 
         if (bookings.isEmpty())
