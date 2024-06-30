@@ -3,7 +3,6 @@ package org.example.app;
 import org.example.command.*;
 import org.example.entity.Booking;
 import org.example.entity.ConferenceHall;
-import org.example.entity.User;
 import org.example.entity.Workplace;
 import org.example.service.BookingService;
 import org.example.service.ConferenceHallService;
