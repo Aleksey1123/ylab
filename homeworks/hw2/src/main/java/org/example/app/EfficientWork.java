@@ -98,7 +98,6 @@ public class EfficientWork {
         System.out.println("-------------------------------------------------");
     }
 
-    /** Output of all registered users. **/
     public void printRegisteredUsers() {
 
         System.out.println(userService.getAllUsers());
@@ -122,53 +121,22 @@ public class EfficientWork {
         }
     }
 
-    /**
-     * Authorize the user by calling authorizeUser() on the corresponding service.
-     * Method throws a RuntimeException in cases: if the user is already logged in,
-     * if authorizeUser() returns false, corresponding to an incorrect username or password.
-     */
     public void authorize() {
 
-        try {
-            if (authorisedUser != null)
-                throw new RuntimeException("You are already logged in as: " +
-                        authorisedUser.getUsername() + ".");
+        System.out.println("Enter username: ");
+        String username = IN.nextLine();
 
-            System.out.println("Enter username: ");
-            String username = IN.nextLine();
+        System.out.println("Enter password: ");
+        String password = IN.nextLine();
 
-            System.out.println("Enter password: ");
-            String password = IN.nextLine();
-
-            if (!userService.authorizeUser(username, password)) {
-                throw new RuntimeException("Incorrect username or password, please try again!");
-            }
-
-            authorisedUser = userService.getUserByUsername(username);
-            System.out.println("Successfully logged in as: " +
-                    username + ".");
-        }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
-        }
+        if (userService.authorizeUser(username, password))
+            System.out.println("Successfully logged in as: " + username + ".");
     }
 
-    /**
-     * Logout by changing the authorisedUser variable.
-     * Method throws a RuntimeException in case the user is not logged in.
-     */
     public void logOut() {
 
-        try {
-            if (authorisedUser == null)
-                throw new RuntimeException("You are not logged in!");
-
-            authorisedUser = null;
+        if (userService.logOut())
             System.out.println("Successfully logged out.");
-        }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
-        }
     }
 
     /**

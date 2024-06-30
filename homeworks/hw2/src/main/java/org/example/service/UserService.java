@@ -21,7 +21,10 @@ public class UserService {
             if (username.isEmpty())
                 throw new RuntimeException("Username must be not empty.");
 
-            if (repository.findAll().containsKey(username)) {
+            boolean conflict = repository.findAll().values()
+                    .stream()
+                    .anyMatch(u -> u.getUsername().equals(username));
+            if (conflict) {
                 throw new RuntimeException("Such username already exists.\n" +
                         "Enter a new username.");
             }
@@ -36,17 +39,54 @@ public class UserService {
         return null;
     }
 
+    /**
+     * Authorizes the user. Throws a RuntimeException in cases: if the user is already logged in,
+     * if the username is incorrect. Returns true if the authorisation ends up successful otherwise - false.
+     */
     public boolean authorizeUser(String username, String password) {
 
-        User foundUser = repository.findByUsername(username);
-        return foundUser != null && foundUser.getPassword().equals(password);
+        try {
+            if (authorisedUser != null)
+                throw new RuntimeException("You are already logged in as: " +
+                        authorisedUser.getUsername() + ".");
+
+            User foundUser = repository.findByUsername(username);
+            if (foundUser == null || !foundUser.getPassword().equals(password)) {
+                throw new RuntimeException("Incorrect username or password, please try again!");
+            }
+            authorisedUser = foundUser;
+
+            return true;
+        }
+        catch (RuntimeException exception) {
+            System.out.println(exception.getMessage());
+        }
+
+        return false;
     }
 
-    public User getUserByUsername(String username) {
+    /**
+     * Logout by changing the authorisedUser variable.
+     * Method throws a RuntimeException in case the user is not logged in (authorisedUser == null).
+     */
+    public boolean logOut() {
+        try {
 
-        return repository.findByUsername(username);
+            if (authorisedUser == null)
+                throw new RuntimeException("You are not logged in!");
+
+            authorisedUser = null;
+
+            return true;
+        }
+        catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+
+        return false;
     }
 
+    /** Outputs all registered users. **/
     public Map<String, User> getAllUsers() {
 
         return repository.findAll();
