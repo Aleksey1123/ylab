@@ -14,13 +14,32 @@ public class ConferenceHallService {
         this.repository = new ConferenceHallRepositoryJDBC();
     }
 
-    public ConferenceHall createConferenceHall(String description, int size) {
+    public ConferenceHall createConferenceHall(String description, String size) {
 
-        return repository.save(description, size);
+        try {
+            return repository.save(description, Integer.valueOf(size));
+        }
+        catch (NumberFormatException exception) {
+            System.out.println("Conference hall size must be an integer!");
+        }
+
+        return null;
     }
 
     public ConferenceHall getConferenceHallById(String id) {
-        return repository.findById(id);
+
+        try {
+            ConferenceHall hall = repository.findById(id);
+            if (hall == null)
+                throw new RuntimeException("No such conference-hall exists, please try again!");
+
+            return hall;
+        }
+        catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
     }
 
     public List<ConferenceHall> getAllConferenceHalls() {
@@ -28,19 +47,37 @@ public class ConferenceHallService {
         return repository.findAll();
     }
 
-    public ConferenceHall updateConferenceHall(String id, String description, int size) {
+    public ConferenceHall updateConferenceHall(String id, String description, String size) {
 
-        ConferenceHall newHall = null;
+        try {
+            if (repository.findById(id) == null)
+                throw new RuntimeException("Conference-hall with ID: " + id + " does not exist.");
 
-        if (repository.findById(id) != null) {
-              newHall = repository.update(id, description, size);
+            return repository.update(id, description, Integer.parseInt(size));
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Conference hall size must be an integer!");
+        }
+        catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
 
-        return newHall;
+        return null;
     }
 
     public ConferenceHall deleteConferenceHall(String id) {
 
-        return repository.deleteById(id);
+        try {
+            ConferenceHall hall = repository.deleteById(id);
+            if (hall == null)
+                throw new RuntimeException("Conference-hall with ID: " + id + " does not exist.");
+
+            return hall;
+        }
+        catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
     }
 }

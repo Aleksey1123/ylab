@@ -22,7 +22,18 @@ public class WorkplaceService {
 
     public Workplace getWorkplaceById(String workplaceId) {
 
-        return repository.findById(workplaceId);
+        try {
+            Workplace workplace = repository.findById(workplaceId);
+            if (workplace == null)
+                throw new RuntimeException("No such workplace exists, please try again!");
+
+            return workplace;
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
     }
 
     public List<Workplace> getAllWorkplaces() {
@@ -32,17 +43,32 @@ public class WorkplaceService {
 
     public Workplace updateWorkplace(String id, String description) {
 
-        Workplace newWorkplace = null;
+        try {
+            if (repository.findById(id) == null)
+                throw new RuntimeException("Workplace with ID: " + id + " does not exist.");
 
-        if (repository.findById(id) != null) {
-            newWorkplace = repository.update(id, description);
+            return repository.update(id, description);
+        }
+        catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
 
-        return newWorkplace;
+        return null;
     }
 
     public Workplace deleteWorkplace(String id) {
 
-        return repository.deleteById(id);
+        try {
+            Workplace workplace = repository.deleteById(id);
+            if (workplace == null)
+                throw new RuntimeException("Workplace with ID: " + id + " does not exist.");
+
+            return workplace;
+        }
+        catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
     }
 }

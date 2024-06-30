@@ -292,20 +292,12 @@ public class EfficientWork {
      **/
     public void getWorkplace() {
 
-        try {
-            System.out.println("Enter workplace ID: ");
-            String id = IN.nextLine();
+        System.out.println("Enter workplace ID: ");
+        String id = IN.nextLine();
 
-            Workplace workplace = workplaceService.getWorkplaceById(id);
-
-            if (workplace == null)
-                throw new RuntimeException("No such workplace exists, please try again!");
-
+        Workplace workplace = workplaceService.getWorkplaceById(id);
+        if (workplace != null)
             System.out.println("Found workplace: " + workplace);
-        }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
-        }
     }
 
     /** Displays all workplaces on the screen using the getAllWorkplaces() method of the resourceService. **/
@@ -324,22 +316,15 @@ public class EfficientWork {
      **/
     public void updateWorkplace() {
 
-        try {
-            System.out.println("Enter the ID of the workplace you want to update: ");
-            String id = IN.nextLine();
+        System.out.println("Enter the ID of the workplace you want to update: ");
+        String id = IN.nextLine();
 
-            System.out.println("Enter the new workplace description: ");
-            String description = IN.nextLine();
+        System.out.println("Enter the new workplace description: ");
+        String description = IN.nextLine();
 
-            if (workplaceService.updateWorkplace(id, description) == null) {
-                throw new RuntimeException("Workplace with ID: " + id + " does not exist.");
-            }
-
+        if (workplaceService.updateWorkplace(id, description) != null)
             System.out.println("Workplace with ID: " + id + " successfully updated");
-        }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
-        }
+
     }
 
     /** Deletes a workplace from the HashMap in resourceService using the deleteWorkplace(id) method of the resourceService.
@@ -347,18 +332,11 @@ public class EfficientWork {
      **/
     public void deleteWorkplace() {
 
-        try {
-            System.out.println("Enter the ID of the workplace you want to delete: ");
-            String id = IN.nextLine();
+        System.out.println("Enter the ID of the workplace you want to delete: ");
+        String id = IN.nextLine();
 
-            if (workplaceService.deleteWorkplace(id) == null)
-                throw new RuntimeException("Workplace with ID: " + id + " does not exist.");
-
+        if (workplaceService.deleteWorkplace(id) != null)
             System.out.println("Workplace with ID: " + id + " successfully deleted");
-        }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
-        }
     }
 
     /** Creates a conference hall using the createConferenceHall() method of the resourceService.
@@ -366,19 +344,14 @@ public class EfficientWork {
      **/
     public void createConferenceHall() {
 
-        try {
-            System.out.println("Enter conference hall description: ");
-            String description = IN.nextLine();
+        System.out.println("Enter conference hall description: ");
+        String description = IN.nextLine();
 
-            System.out.println("Enter conference hall size: ");
-            int size = Integer.parseInt(IN.nextLine());
+        System.out.println("Enter conference hall size: ");
+        String size = IN.nextLine();
 
-            if (hallService.createConferenceHall(description, size) != null)
-                System.out.println("Conference hall successfully added!");
-        }
-        catch (NumberFormatException exception) {
-            System.out.println("Conference hall size must be an integer!");
-        }
+        if (hallService.createConferenceHall(description, size) != null)
+            System.out.println("Conference hall successfully added!");
     }
 
     /** Displays a conference hall on the screen using the getConferenceHallById(id) method of the resourceService.
@@ -412,22 +385,17 @@ public class EfficientWork {
      **/
     public void updateConferenceHall() {
 
-        try {
-            System.out.println("Enter the ID of the conference hall you want to update: ");
-            String id = IN.nextLine();
+        System.out.println("Enter the ID of the conference hall you want to update: ");
+        String id = IN.nextLine();
 
-            System.out.println("Enter the new conference hall description: ");
-            String description = IN.nextLine();
+        System.out.println("Enter the new conference hall description: ");
+        String description = IN.nextLine();
 
-            System.out.println("Enter conference hall size: ");
-            int size = Integer.parseInt(IN.nextLine());
+        System.out.println("Enter conference hall size: ");
+        String size = IN.nextLine();
 
-            if (hallService.updateConferenceHall(id, description, size) != null)
-                System.out.println("Conference hall with ID: " + id + " successfully updated");
-        }
-        catch (NumberFormatException exception) {
-            System.out.println("Conference hall size must be an integer!");
-        }
+        if (hallService.updateConferenceHall(id, description, size) != null)
+            System.out.println("Conference hall with ID: " + id + " successfully updated");
     }
 
     /** Deletes a conference hall from the HashMap conferenceHalls in resourceService using the deleteConferenceHall(id) method of the resourceService.
