@@ -14,7 +14,6 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
     private final String resourceType = Resource.WORKPLACE.toString();
 
     private Connection getConnection() throws SQLException {
-//        String url = "jdbc:postgresql://db:5432/efficient_work";
         String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
         String user = "root";
         String password = "password";
@@ -45,9 +44,8 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
             statement.setString(2, description);
 
             int rowsSaved = statement.executeUpdate();
-            if (rowsSaved == 0) {
+            if (rowsSaved == 0)
                 throw new SQLException("Creation of the workplace failed, try again.");
-            }
 
             return Workplace.builder()
                     .id(id)
@@ -72,9 +70,8 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
             statement.setObject(2, UUID.fromString(id));
 
             int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated == 0) {
+            if (rowsUpdated == 0)
                 throw new SQLException("Update of the workplace failed, no rows affected.");
-            }
 
             return Workplace.builder()
                     .id(UUID.fromString(id))
@@ -99,19 +96,15 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
             statement.setObject(1, UUID.fromString(workplaceId));
             ResultSet set = statement.executeQuery();
 
-            if (set.next()) {
+            if (set.next())
                 return mapWorkplace(set);
-            }
-
-            throw new RuntimeException("Such workplace does not exist.");
         }
         catch (SQLException e) {
             System.out.println("SQL exception occurred: " + e.getMessage());
-        }
-        catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            return null;
         }
 
+        System.out.println("Such workplace does not exist.");
         return null;
     }
 
@@ -142,9 +135,8 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
     public Workplace deleteById(String workplaceId) {
 
         Workplace workplace = findById(workplaceId);
-        if (workplace == null) {
+        if (workplace == null)
             throw new NoSuchElementException("Workplace with id " + workplaceId + " not found.");
-        }
 
         String sql = "DELETE FROM workplaces WHERE id = ?";
 
@@ -154,9 +146,8 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
             statement.setObject(1, UUID.fromString(workplaceId));
             int rowsDeleted = statement.executeUpdate();
 
-            if (rowsDeleted == 0) {
+            if (rowsDeleted == 0)
                 throw new SQLException("Deletion of the workplace failed, no rows affected.");
-            }
 
             return workplace;
         }

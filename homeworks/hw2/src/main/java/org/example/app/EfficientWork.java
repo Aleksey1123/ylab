@@ -22,33 +22,7 @@ public class EfficientWork {
     private final WorkplaceService workplaceService = new WorkplaceService();
     private final ConferenceHallService hallService = new ConferenceHallService();
 
-    private final CommandInvoker invoker = new CommandInvoker();
-
-    public EfficientWork() {
-
-        invoker.registerCommand("?", new PrintRegisteredUsersCommand(this));
-        invoker.registerCommand("help", new HelpCommand(this));
-        invoker.registerCommand("1", new RegisterUserCommand(this));
-        invoker.registerCommand("2", new AuthorizeCommand(this));
-        invoker.registerCommand("3", new BookResourceCommand(this));
-        invoker.registerCommand("4", new CancelBookingCommand(this));
-        invoker.registerCommand("5", new ViewAllBookingsCommand(this));
-        invoker.registerCommand("6", new ViewBookingsByResourceCommand(this));
-        invoker.registerCommand("7", new ViewAllBookingsByUserCommand(this));
-        invoker.registerCommand("8", new ViewAllBookingsByDateCommand(this));
-        invoker.registerCommand("9", new LogOutCommand(this));
-        invoker.registerCommand("edit", new ShowEditMenuCommand(this));
-        invoker.registerCommand("cw", new CreateWorkplaceCommand(this));
-        invoker.registerCommand("gw", new GetWorkplaceCommand(this));
-        invoker.registerCommand("gaw", new GetAllWorkplacesCommand(this));
-        invoker.registerCommand("uw", new UpdateWorkplaceCommand(this));
-        invoker.registerCommand("dw", new DeleteWorkplaceCommand(this));
-        invoker.registerCommand("ch", new CreateConferenceHallCommand(this));
-        invoker.registerCommand("gh", new GetConferenceHallCommand(this));
-        invoker.registerCommand("gah", new GetAllConferenceHallsCommand(this));
-        invoker.registerCommand("uh", new UpdateConferenceHallCommand(this));
-        invoker.registerCommand("dh", new DeleteConferenceHallCommand(this));
-    }
+    private final CommandInvoker invoker = new CommandInvoker(this);
 
     /**
      * Infinity loop that keeps the app running
@@ -100,7 +74,7 @@ public class EfficientWork {
     }
 
     /**
-     * This method provide user registration at the appropriate service.
+     * This method provides a user registration at the appropriate service.
      * Method throws a RuntimeException: if a user with this username already exists,
      * if username is empty, if addUser() returns null, that corresponds to a registration error.
      */

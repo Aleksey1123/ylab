@@ -2,10 +2,9 @@ package org.example.repository;
 
 import org.example.entity.Booking;
 import org.example.entity.User;
-import org.example.enums.Resource;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -20,7 +19,6 @@ public class BookingRepositoryJDBC implements BookingRepository {
     private Connection getConnection() throws SQLException {
 
         String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
-//        String url = "jdbc:postgresql://db:5432/efficient_work";
         String user = "root";
         String password = "password";
 
@@ -49,11 +47,10 @@ public class BookingRepositoryJDBC implements BookingRepository {
                 .endTime(endTime)
                 .user(user);
 
-        if (workplaceId != null) {
+        if (workplaceId != null)
             bookingBuilder.workplaceId(workplaceId);
-        } else if (hallId != null) {
+        else if (hallId != null)
             bookingBuilder.hallId(hallId);
-        }
 
         return bookingBuilder.build();
     }
@@ -83,9 +80,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
             statement.setObject(6, booking.getUser().getId());
 
             int rowsSaved = statement.executeUpdate();
-            if (rowsSaved == 0) {
+            if (rowsSaved == 0)
                 throw new SQLException("Creation of the booking failed, try again.");
-            }
 
             return Booking.builder()
                     .id(id)
@@ -106,9 +102,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
     @Override
     public Booking deleteById(String bookingId) {
         Booking booking = findById(bookingId);
-        if (booking == null) {
+        if (booking == null)
             throw new NoSuchElementException("Booking with id " + bookingId + " not found.");
-        }
 
         String sql = "DELETE FROM bookings WHERE id = ?";
 
@@ -118,9 +113,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
             statement.setObject(1, UUID.fromString(bookingId));
             int rowsDeleted = statement.executeUpdate();
 
-            if (rowsDeleted == 0) {
+            if (rowsDeleted == 0)
                 throw new SQLException("Deletion of the booking failed, no rows affected.");
-            }
 
             return booking;
         }
@@ -142,9 +136,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
             statement.setObject(1, UUID.fromString(bookingId));
             ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.next()) {
+            if (resultSet.next())
                 return mapBooking(resultSet);
-            }
         }
         catch (SQLException e) {
             System.out.println("SQL exception occurred: " + e.getMessage());
@@ -183,9 +176,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
     public List<Booking> findAllBookingsByUser(String username) {
 
         User user = userRepository.findByUsername(username);
-        if (user == null) {
+        if (user == null)
             throw new NoSuchElementException("User with username " + username + " not found.");
-        }
 
         String sql = "SELECT b.*, u.username, u.password FROM bookings b JOIN users u" +
                 " ON b.user_id = u.id WHERE u.username = ?";
@@ -255,7 +247,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
             }
 
             return bookings;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             System.out.println("SQL exception occurred: " + e.getMessage());
         }
 

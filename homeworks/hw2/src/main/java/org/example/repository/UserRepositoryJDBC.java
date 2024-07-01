@@ -11,7 +11,6 @@ public class UserRepositoryJDBC implements UserRepository {
 
     private Connection getConnection() throws SQLException {
         String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
-//        String url = "jdbc:postgresql://db:5432/efficient_work";
         String user = "root";
         String password = "password";
 
@@ -44,9 +43,8 @@ public class UserRepositoryJDBC implements UserRepository {
             statement.setString(3, password);
 
             int rowsSaved = statement.executeUpdate();
-            if (rowsSaved == 0) {
+            if (rowsSaved == 0)
                 throw new SQLException("Creation of the user failed, try again.");
-            }
 
             return User.builder()
                     .id(id)
@@ -72,19 +70,15 @@ public class UserRepositoryJDBC implements UserRepository {
             statement.setString(1, username);
             ResultSet set = statement.executeQuery();
 
-            if (set.next()) {
+            if (set.next())
                 return mapUser(set);
-            }
-
-            throw new RuntimeException("User with username " + username + " not found.");
         }
         catch (SQLException e) {
             System.out.println("SQL exception occurred: " + e.getMessage());
-        }
-        catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            return null;
         }
 
+        System.out.println("User with username " + username + " not found.");
         return null;
     }
 
@@ -98,19 +92,15 @@ public class UserRepositoryJDBC implements UserRepository {
             statement.setObject(1, UUID.fromString(id));
             ResultSet set = statement.executeQuery();
 
-            if (set.next()) {
+            if (set.next())
                 return mapUser(set);
-            }
-
-            throw new RuntimeException("User with id " + id + " not found.");
         }
         catch (SQLException e) {
             System.out.println("SQL exception occurred: " + e.getMessage());
-        }
-        catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            return null;
         }
 
+        System.out.println("User with id " + id + " not found.");
         return null;
     }
 

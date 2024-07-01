@@ -15,7 +15,6 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
 
     private Connection getConnection() throws SQLException {
         String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
-//        String url = "jdbc:postgresql://db:5432/efficient_work";
         String user = "root";
         String password = "password";
 
@@ -76,9 +75,8 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
             statement.setObject(3, UUID.fromString(id));
 
             int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated == 0) {
+            if (rowsUpdated == 0)
                 throw new SQLException("Update of the conference hall failed, no rows affected.");
-            }
 
             return ConferenceHall.builder()
                     .id(UUID.fromString(id))
@@ -106,16 +104,13 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
 
             if (set.next())
                 return mapConferenceHall(set);
-
-            throw new RuntimeException("Such conference hall does not exist.");
         }
         catch (SQLException e) {
             System.out.println("SQL exception occurred: " + e.getMessage());
-        }
-        catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            return null;
         }
 
+        System.out.println("Such conference hall does not exist.");
         return null;
     }
 
@@ -146,9 +141,8 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
     public ConferenceHall deleteById(String hallId) {
 
         ConferenceHall hall = findById(hallId);
-        if (hall == null) {
+        if (hall == null)
             throw new NoSuchElementException("Conference hall with id" + hallId + " not found.");
-        }
 
         String sql = "DELETE FROM conference_halls WHERE id = ?";
 
@@ -158,9 +152,8 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
             statement.setObject(1, UUID.fromString(hallId));
             int rowsDeleted = statement.executeUpdate();
 
-            if (rowsDeleted == 0) {
+            if (rowsDeleted == 0)
                 throw new SQLException("Deletion of the conference hall failed, no rows affected.");
-            }
 
             return hall;
         }
