@@ -7,7 +7,8 @@ import java.util.List;
 public interface WorkplaceRepository {
 
     Workplace save(String description);
-    Workplace findById(String workplaceId);
+    Workplace update(Integer id, String description);
+    Workplace findById(Integer workplaceId);
     List<Workplace> findAll();
-    Workplace deleteById(String workplaceId);
+    Workplace deleteById(Integer workplaceId);
 }

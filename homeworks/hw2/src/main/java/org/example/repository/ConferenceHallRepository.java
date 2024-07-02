@@ -7,7 +7,8 @@ import java.util.List;
 public interface ConferenceHallRepository {
 
     ConferenceHall save(String description, Integer size);
-    ConferenceHall findById(String hallId);
+    ConferenceHall update(Integer hallId, String description, int size);
+    ConferenceHall findById(Integer hallId);
     List<ConferenceHall> findAll();
-    ConferenceHall deleteById(String hallId);
+    ConferenceHall deleteById(Integer hallId);
 }

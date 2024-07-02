@@ -4,11 +4,10 @@ import org.example.entity.Booking;
 import org.example.entity.User;
 import org.example.repository.BookingRepositoryJDBC;
 
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 /** This service corresponds for work with Bookings Entities. **/
@@ -33,23 +32,26 @@ public class BookingService {
 
         try {
             User user = userService.isAuthorised();
-            if (user == null)
-                throw new RuntimeException("You must log in before booking.");
+            if (user == null) {
+                System.out.println("You must log in before booking.");
+                return false;
+            }
 
-            if (!resourceType.equals("W") && !resourceType.equals("H"))
-                throw new RuntimeException("Invalid resource type: " + resourceType);
+            if (!resourceType.equals("W") && !resourceType.equals("H")) {
+                System.out.println("Invalid resource type: " + resourceType);
+                return false;
+            }
 
             LocalDateTime startTime = LocalDateTime.parse(startDateTimeString);
             LocalDateTime endTime = LocalDateTime.parse(endDateTimeString);
             Booking booking = Booking.builder()
-                    .id(UUID.randomUUID())
-                    .workplaceId(UUID.fromString(resourceId))
+                    .workplaceId(Integer.valueOf(resourceId))
                     .startTime(startTime)
                     .endTime(endTime)
                     .user(user)
                     .build();
 
-            List<Booking> conflictList = repository.findAllBookingsByResource(resourceId)
+            List<Booking> conflictList = repository.findAllBookingsByResource(Integer.valueOf(resourceId))
                     .stream()
                     .filter(b -> b.getStartTime().isBefore(endTime) && b.getEndTime().isAfter(startTime))
                     .toList();
@@ -59,11 +61,11 @@ public class BookingService {
                 return true;
             }
         }
-        catch (DateTimeException exception) {
+        catch (DateTimeParseException e) {
             System.out.println("Incorrect date entered.");
         }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
+        catch (NumberFormatException e) {
+            System.out.println("All entered ID's must be Integer type.");
         }
 
         return false;
@@ -75,13 +77,15 @@ public class BookingService {
     public boolean cancelBooking(String bookingId) {
 
         try {
-            if (repository.deleteById(bookingId) == null)
-                throw new RuntimeException("Incorrect booking ID, please try again.");
+            if (repository.deleteById(Integer.valueOf(bookingId)) == null) {
+                System.out.println("Incorrect booking ID, please try again.");
+                return false;
+            }
 
             return true;
         }
-        catch (RuntimeException exception) {
-            System.out.println(exception.getMessage());
+        catch (NumberFormatException e) {
+            System.out.println(e.getMessage());
         }
 
         return false;
@@ -93,8 +97,8 @@ public class BookingService {
             LocalDateTime date = LocalDateTime.parse(startDateTimeString);
             return repository.findAllBookingsByDate(date);
         }
-        catch (DateTimeException exception) {
-            System.out.println(exception.getMessage());
+        catch (DateTimeParseException e) {
+            System.out.println(e.getMessage());
         }
 
         return null;
@@ -110,7 +114,14 @@ public class BookingService {
 
     public List<Booking> getAllBookingsByResource(String resourceId) {
 
-        return repository.findAllBookingsByResource(resourceId);
+        try {
+            return repository.findAllBookingsByResource(Integer.valueOf(resourceId));
+        }
+        catch (NumberFormatException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
     }
 
     public List<Booking> getAllBookings() {

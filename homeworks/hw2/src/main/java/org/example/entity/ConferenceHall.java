@@ -2,8 +2,6 @@ package org.example.entity;
 
 import lombok.*;
 
-import java.util.UUID;
-
 /**
  * Сущность пользователь с полями ID, описание, размер(в местах).
  */
@@ -14,7 +12,7 @@ import java.util.UUID;
 @ToString
 public class ConferenceHall {
 
-    private UUID id;
+    private Integer id;
     private String description;
     private Integer size;
 }

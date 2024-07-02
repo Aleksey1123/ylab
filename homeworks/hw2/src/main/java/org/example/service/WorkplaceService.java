@@ -23,14 +23,14 @@ public class WorkplaceService {
     public Workplace getWorkplaceById(String workplaceId) {
 
         try {
-            Workplace workplace = repository.findById(workplaceId);
+            Workplace workplace = repository.findById(Integer.valueOf(workplaceId));
             if (workplace == null)
-                throw new RuntimeException("No such workplace exists, please try again!");
+                System.out.println("No such workplace exists, please try again!");
 
             return workplace;
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
+        catch (NumberFormatException e) {
+            System.out.println("Workspace id must be an integer!");
         }
 
         return null;
@@ -41,32 +41,38 @@ public class WorkplaceService {
         return repository.findAll();
     }
 
-    public Workplace updateWorkplace(String id, String description) {
+    public Workplace updateWorkplace(String workspaceId, String description) {
 
         try {
-            if (repository.findById(id) == null)
-                throw new RuntimeException("Workplace with ID: " + id + " does not exist.");
+            int idInt = Integer.parseInt(workspaceId);
+            if (repository.findById(idInt) == null) {
+                System.out.println("Workplace with ID: " + workspaceId + " does not exist.");
+                return null;
+            }
 
-            return repository.update(id, description);
+            return repository.update(idInt, description);
         }
-        catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+        catch (NumberFormatException e) {
+            System.out.println("Workspace id must be an integer!");
         }
 
         return null;
     }
 
-    public Workplace deleteWorkplace(String id) {
+    public Workplace deleteWorkplace(String workspaceId) {
 
         try {
-            Workplace workplace = repository.deleteById(id);
-            if (workplace == null)
-                throw new RuntimeException("Workplace with ID: " + id + " does not exist.");
+            int idInt = Integer.parseInt(workspaceId);
+            Workplace workplace = repository.deleteById(idInt);
+            if (workplace == null) {
+                System.out.println("Workplace with ID: " + workspaceId + " does not exist.");
+                return null;
+            }
 
             return workplace;
         }
-        catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+        catch (NumberFormatException e) {
+            System.out.println("Workspace id must be an integer!");
         }
 
         return null;

@@ -15,9 +15,9 @@ public class DatabaseTest {
     @BeforeAll
     static void beforeAll() {
         postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest")
-                .withDatabaseName("testDB")
-                .withUsername("testUser")
-                .withPassword("testPassword");
+                .withDatabaseName("efficient_work")
+                .withUsername("root")
+                .withPassword("password");
         postgreSQLContainer.start();
     }
 

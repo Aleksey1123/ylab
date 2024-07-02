@@ -2,8 +2,6 @@ package org.example.entity;
 
 import lombok.*;
 
-import java.util.UUID;
-
 /**
  * Сущность пользователь с полями ID, имя, пароль.
  */
@@ -14,7 +12,7 @@ import java.util.UUID;
 @ToString
 public class User {
 
-    private UUID id;
+    private Integer id;
     private String username;
     private String password;
 }

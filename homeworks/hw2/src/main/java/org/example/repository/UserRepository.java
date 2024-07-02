@@ -10,7 +10,7 @@ public interface UserRepository {
 
     User findByUsername(String username);
 
-    User findById(String id);
+    User findById(Integer userId);
 
     Map<String, User> findAll();
 }

@@ -2,8 +2,6 @@ package org.example.entity;
 
 import lombok.*;
 
-import java.util.UUID;
-
 
 /**
  * Сущность рабочее место с полями ID и описание.
@@ -15,6 +13,6 @@ import java.util.UUID;
 @ToString
 public class Workplace {
 
-    private UUID id;
+    private Integer id;
     private String description;
 }

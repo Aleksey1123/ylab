@@ -5,11 +5,10 @@ import org.example.entity.User;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class UserRepositoryJDBC implements UserRepository {
 
-    private Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
         String user = "root";
         String password = "password";
@@ -18,12 +17,12 @@ public class UserRepositoryJDBC implements UserRepository {
     }
 
     private User mapUser(ResultSet set) throws SQLException {
-        UUID id = set.getObject("id", UUID.class);
+        int userId = set.getInt("id");
         String username = set.getString("username");
         String password = set.getString("password");
 
         return User.builder()
-                .id(id)
+                .id(userId)
                 .username(username)
                 .password(password)
                 .build();
@@ -32,25 +31,24 @@ public class UserRepositoryJDBC implements UserRepository {
     @Override
     public User save(String username, String password) {
 
-        String sql = "INSERT INTO users (id, username, password) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (username, password) VALUES (?, ?) RETURNING id";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            UUID id = UUID.randomUUID();
-            statement.setObject(1, id);
-            statement.setString(2, username);
-            statement.setString(3, password);
+            statement.setString(1, username);
+            statement.setString(2, password);
 
-            int rowsSaved = statement.executeUpdate();
-            if (rowsSaved == 0)
-                throw new SQLException("Creation of the user failed, try again.");
-
-            return User.builder()
-                    .id(id)
-                    .username(username)
-                    .password(password)
-                    .build();
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int userId = resultSet.getInt(1);
+                return User.builder()
+                        .id(userId)
+                        .username(username)
+                        .password(password)
+                        .build();
+            }
+            else throw new SQLException("Creation of the user failed, try again.");
         }
         catch (SQLException e) {
             System.out.println("SQL exception occurred: " + e.getMessage());
@@ -82,14 +80,15 @@ public class UserRepositoryJDBC implements UserRepository {
         return null;
     }
 
-    public User findById(String id) {
+    @Override
+    public User findById(Integer userId) {
 
         String sql = "SELECT * FROM users WHERE id = ?";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setObject(1, UUID.fromString(id));
+            statement.setInt(1, userId);
             ResultSet set = statement.executeQuery();
 
             if (set.next())
@@ -100,7 +99,7 @@ public class UserRepositoryJDBC implements UserRepository {
             return null;
         }
 
-        System.out.println("User with id " + id + " not found.");
+        System.out.println("User with id " + userId + " not found.");
         return null;
     }
 

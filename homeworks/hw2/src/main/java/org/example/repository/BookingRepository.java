@@ -10,13 +10,13 @@ public interface BookingRepository {
 
     Booking save(Booking booking);
 
-    Booking deleteById(String bookingId);
+    Booking deleteById(Integer bookingId);
 
     List<Booking> findAllBookingsByDate(LocalDateTime date);
 
     List<Booking> findAllBookingsByUser(String username);
 
-    List<Booking> findAllBookingsByResource(String resourceId);
+    List<Booking> findAllBookingsByResource(Integer resourceId);
 
-    Map<String, Booking> findAllBookings();
+    Map<Integer, Booking> findAllBookings();
 }

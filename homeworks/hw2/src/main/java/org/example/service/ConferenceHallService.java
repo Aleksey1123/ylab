@@ -26,17 +26,17 @@ public class ConferenceHallService {
         return null;
     }
 
-    public ConferenceHall getConferenceHallById(String id) {
+    public ConferenceHall getConferenceHallById(String hallId) {
 
         try {
-            ConferenceHall hall = repository.findById(id);
+            ConferenceHall hall = repository.findById(Integer.valueOf(hallId));
             if (hall == null)
-                throw new RuntimeException("No such conference-hall exists, please try again!");
+                System.out.println("No such conference-hall exists, please try again!");
 
             return hall;
         }
-        catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+        catch (NumberFormatException e) {
+            System.out.println("Conference-hall id must be an Integer type.");
         }
 
         return null;
@@ -47,35 +47,48 @@ public class ConferenceHallService {
         return repository.findAll();
     }
 
-    public ConferenceHall updateConferenceHall(String id, String description, String size) {
+    public ConferenceHall updateConferenceHall(String hallId, String description, String size) {
 
+        int hallIdInt;
+        int sizeInt;
         try {
-            if (repository.findById(id) == null)
-                throw new RuntimeException("Conference-hall with ID: " + id + " does not exist.");
-
-            return repository.update(id, description, Integer.parseInt(size));
+            hallIdInt = Integer.parseInt(hallId);
         }
         catch (NumberFormatException e) {
-            System.out.println("Conference hall size must be an integer!");
+            System.out.println("Conference-hall id must be an Integer type.");
+            return null;
         }
-        catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return null;
-    }
-
-    public ConferenceHall deleteConferenceHall(String id) {
 
         try {
-            ConferenceHall hall = repository.deleteById(id);
-            if (hall == null)
-                throw new RuntimeException("Conference-hall with ID: " + id + " does not exist.");
+            sizeInt = Integer.parseInt(size);
+        }
+        catch (NumberFormatException e) {
+            System.out.println("Conference-hall size must be an Integer type.");
+            return null;
+        }
+
+        if (repository.findById(hallIdInt) == null) {
+            System.out.println("Conference-hall with ID: " + hallId + " does not exist.");
+            return null;
+        }
+
+        return repository.update(hallIdInt, description, sizeInt);
+    }
+
+    public ConferenceHall deleteConferenceHall(String hallId) {
+
+        try {
+            int idInt = Integer.parseInt(hallId);
+            ConferenceHall hall = repository.deleteById(idInt);
+            if (hall == null) {
+                System.out.println("Conference-hall with ID: " + hallId + " does not exist.");
+                return null;
+            }
 
             return hall;
         }
-        catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+        catch (NumberFormatException e) {
+            System.out.println("Conference-hall id must be an Integer type.");
         }
 
         return null;

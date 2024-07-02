@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * Сущность бронирование с полями ID, ID ресурса, дата начала бронирования,
@@ -18,9 +17,9 @@ import java.util.UUID;
 @ToString
 public class Booking {
 
-    private UUID id;
-    private UUID workplaceId;
-    private UUID hallId;
+    private Integer id;
+    private Integer workplaceId;
+    private Integer hallId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private User user;

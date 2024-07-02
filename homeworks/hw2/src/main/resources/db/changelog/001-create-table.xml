@@ -8,9 +8,13 @@
         <sql>CREATE SCHEMA IF NOT EXISTS service_schema;</sql>
     </changeSet>
 
-    <changeSet id="002-create-users-table" author="alex">
+    <changeSet id="002-create-users-sequence" author="alex">
+        <createSequence schemaName="service_schema" sequenceName="users_id_seq" startValue="3"/>
+    </changeSet>
+
+    <changeSet id="003-create-users-table" author="alex">
         <createTable schemaName="service_schema" tableName="users">
-            <column name="id" type="uuid">
+            <column name="id" type="int" defaultValueComputed="nextval('service_schema.users_id_seq')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="username" type="varchar(255)">
@@ -22,9 +26,13 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="003-create-conference-halls-table" author="alex">
+    <changeSet id="004-create-conference-halls-sequence" author="alex">
+        <createSequence schemaName="service_schema" sequenceName="conference_halls_id_seq" startValue="3" />
+    </changeSet>
+
+    <changeSet id="005-create-conference-halls-table" author="alex">
         <createTable schemaName="service_schema" tableName="conference_halls">
-            <column name="id" type="uuid">
+            <column name="id" type="int" defaultValueComputed="nextval('service_schema.conference_halls_id_seq')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="description" type="varchar(255)">
@@ -36,9 +44,13 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="004-create-workplaces-table" author="alex">
+    <changeSet id="006-create-workplaces-sequence" author="alex">
+        <createSequence schemaName="service_schema" sequenceName="workplaces_id_seq" startValue="3" />
+    </changeSet>
+
+    <changeSet id="007-create-workplaces-table" author="alex">
         <createTable schemaName="service_schema" tableName="workplaces">
-            <column name="id" type="uuid">
+            <column name="id" type="int" defaultValueComputed="nextval('service_schema.workplaces_id_seq')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="description" type="varchar(255)">
@@ -47,26 +59,30 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="005-create-bookings-table" author="alex">
+    <changeSet id="008-create-bookings-sequence" author="alex">
+        <createSequence schemaName="service_schema" sequenceName="bookings_id_seq" startValue="1" />
+    </changeSet>
+
+    <changeSet id="009-create-bookings-table" author="alex">
         <createTable schemaName="service_schema" tableName="bookings">
-            <column name="id" type="uuid">
+            <column name="id" type="int" defaultValueComputed="nextval('service_schema.bookings_id_seq')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="workplace_id" type="uuid"/>
-            <column name="conference_hall_id" type="uuid"/>
+            <column name="workplace_id" type="int"/>
+            <column name="conference_hall_id" type="int"/>
             <column name="start_time" type="timestamp">
                 <constraints nullable="false"/>
             </column>
             <column name="end_time" type="timestamp">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="uuid">
+            <column name="user_id" type="int">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
-    <changeSet id="006-add-foreign-key-constraints" author="alex">
+    <changeSet id="010-add-foreign-key-constraints" author="alex">
         <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="workplace_id"
                                  constraintName="fk_bookings_workplace_id"
                                  referencedTableName="workplaces"
@@ -89,3 +105,4 @@
                                  referencedTableSchemaName="service_schema"/>
     </changeSet>
 </databaseChangeLog>
+

@@ -26,12 +26,12 @@ public class BookingRepositoryJDBC implements BookingRepository {
     }
 
     private Booking mapBooking(ResultSet set) throws SQLException {
-        UUID id = set.getObject("id", UUID.class);
-        UUID workplaceId = set.getObject("workplace_id", UUID.class);
-        UUID hallId = set.getObject("conference_hall_id", UUID.class);
+        int bookingId = set.getInt("id");
+        Integer workplaceId = set.getInt("workplace_id");
+        Integer hallId = set.getInt("conference_hall_id");
         LocalDateTime startTime = set.getTimestamp("start_time").toLocalDateTime();
         LocalDateTime endTime = set.getTimestamp("end_time").toLocalDateTime();
-        UUID userId = set.getObject("user_id", UUID.class);
+        int userId = set.getInt("user_id");
         String username = set.getString("username");
         String password = set.getString("password");
 
@@ -42,7 +42,7 @@ public class BookingRepositoryJDBC implements BookingRepository {
                 .build();
 
         Booking.BookingBuilder bookingBuilder = Booking.builder()
-                .id(id)
+                .id(bookingId)
                 .startTime(startTime)
                 .endTime(endTime)
                 .user(user);
@@ -59,38 +59,37 @@ public class BookingRepositoryJDBC implements BookingRepository {
     @Override
     public Booking save(Booking booking) {
 
-        String sql = "INSERT INTO bookings (id, workplace_id, conference_hall_id, start_time," +
-                " end_time, user_id) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO bookings (workplace_id, conference_hall_id, start_time," +
+                " end_time, user_id) VALUES (?, ?, ?, ?, ?) RETURNING id";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            UUID id = UUID.randomUUID();
-            statement.setObject(1, id);
             if (booking.getWorkplaceId() != null) {
-                statement.setObject(2, booking.getWorkplaceId());
-                statement.setNull(3, Types.OTHER);
+                statement.setObject(1, booking.getWorkplaceId());
+                statement.setNull(2, Types.OTHER);
             }
             else {
-                statement.setNull(2, Types.OTHER);
-                statement.setObject(3, booking.getHallId());
+                statement.setNull(1, Types.OTHER);
+                statement.setObject(2, booking.getHallId());
             }
-            statement.setTimestamp(4, Timestamp.valueOf(booking.getStartTime()));
-            statement.setTimestamp(5, Timestamp.valueOf(booking.getEndTime()));
-            statement.setObject(6, booking.getUser().getId());
+            statement.setTimestamp(3, Timestamp.valueOf(booking.getStartTime()));
+            statement.setTimestamp(4, Timestamp.valueOf(booking.getEndTime()));
+            statement.setObject(5, booking.getUser().getId());
 
-            int rowsSaved = statement.executeUpdate();
-            if (rowsSaved == 0)
-                throw new SQLException("Creation of the booking failed, try again.");
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int bookingId = resultSet.getInt(1);
+                return Booking.builder()
+                        .id(bookingId)
+                        .workplaceId(booking.getWorkplaceId())
+                        .hallId(booking.getHallId())
+                        .startTime(booking.getStartTime())
+                        .endTime(booking.getEndTime())
+                        .user(booking.getUser())
+                        .build();
+            }
 
-            return Booking.builder()
-                    .id(id)
-                    .workplaceId(booking.getWorkplaceId())
-                    .hallId(booking.getHallId())
-                    .startTime(booking.getStartTime())
-                    .endTime(booking.getEndTime())
-                    .user(booking.getUser())
-                    .build();
         }
         catch (SQLException e) {
             System.out.println("SQL exception occurred: " + e.getMessage());
@@ -100,21 +99,26 @@ public class BookingRepositoryJDBC implements BookingRepository {
     }
 
     @Override
-    public Booking deleteById(String bookingId) {
+    public Booking deleteById(Integer bookingId) {
+
         Booking booking = findById(bookingId);
-        if (booking == null)
-            throw new NoSuchElementException("Booking with id " + bookingId + " not found.");
+        if (booking == null) {
+            System.out.println("Booking with id " + bookingId + " not found.");
+            return null;
+        }
 
         String sql = "DELETE FROM bookings WHERE id = ?";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setObject(1, UUID.fromString(bookingId));
+            statement.setInt(1, bookingId);
             int rowsDeleted = statement.executeUpdate();
 
-            if (rowsDeleted == 0)
-                throw new SQLException("Deletion of the booking failed, no rows affected.");
+            if (rowsDeleted == 0) {
+                System.out.println("Deletion of the booking failed, no rows affected.");
+                return null;
+            }
 
             return booking;
         }
@@ -125,7 +129,7 @@ public class BookingRepositoryJDBC implements BookingRepository {
         return null;
     }
 
-    public Booking findById(String bookingId) {
+    public Booking findById(Integer bookingId) {
 
         String sql = "SELECT b.*, u.username, u.password FROM bookings b JOIN users u" +
                 " ON b.user_id = u.id WHERE b.id = ?";
@@ -133,7 +137,7 @@ public class BookingRepositoryJDBC implements BookingRepository {
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setObject(1, UUID.fromString(bookingId));
+            statement.setObject(1, bookingId);
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next())
@@ -203,17 +207,17 @@ public class BookingRepositoryJDBC implements BookingRepository {
     }
 
     @Override
-    public List<Booking> findAllBookingsByResource(String resourceId) {
+    public List<Booking> findAllBookingsByResource(Integer resourceId) {
 
-        UUID resourceUUID = UUID.fromString(resourceId);
+        int resourceIdInt = resourceId;
         String sql = "SELECT b.*, u.username, u.password FROM bookings b JOIN users u" +
                 " ON b.user_id = u.id WHERE (b.workplace_id = ? OR b.conference_hall_id = ?)";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setObject(1, resourceUUID);
-            statement.setObject(2, resourceUUID);
+            statement.setInt(1, resourceIdInt);
+            statement.setInt(2, resourceIdInt);
             ResultSet resultSet = statement.executeQuery();
 
             List<Booking> bookings = new ArrayList<>();
@@ -231,7 +235,7 @@ public class BookingRepositoryJDBC implements BookingRepository {
     }
 
     @Override
-    public Map<String, Booking> findAllBookings() {
+    public Map<Integer, Booking> findAllBookings() {
 
         String sql = "SELECT b.*, u.username, u.password FROM bookings b JOIN users u" +
                 " ON b.user_id = u.id";
@@ -240,10 +244,10 @@ public class BookingRepositoryJDBC implements BookingRepository {
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
 
-            Map<String, Booking> bookings = new HashMap<>();
+            Map<Integer, Booking> bookings = new HashMap<>();
             while (resultSet.next()) {
                 Booking booking = mapBooking(resultSet);
-                bookings.put(booking.getId().toString(), booking);
+                bookings.put(booking.getId(), booking);
             }
 
             return bookings;
