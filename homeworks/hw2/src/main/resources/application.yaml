@@ -1,0 +1,4 @@
+db:
+  url: jdbc:postgresql://postgres-container:5432/efficient_work
+  username: root
+  password: password
