@@ -8,7 +8,7 @@ import java.util.List;
 
 public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
 
-    private Connection getConnection() throws SQLException {
+    protected Connection getConnection() throws SQLException {
         String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
         String user = "root";
         String password = "password";
