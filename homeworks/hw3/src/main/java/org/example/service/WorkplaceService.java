@@ -1,11 +1,13 @@
 package org.example.service;
 
+import org.example.annotation.Loggable;
 import org.example.entity.Workplace;
 import org.example.repository.WorkplaceRepositoryJDBC;
 
 import java.util.List;
 
 /** This service corresponds for work with Workplace Entities. **/
+@Loggable
 public class WorkplaceService {
 
     private WorkplaceRepositoryJDBC repository;

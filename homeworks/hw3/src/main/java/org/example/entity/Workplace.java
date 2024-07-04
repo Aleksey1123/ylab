@@ -6,11 +6,10 @@ import lombok.*;
 /**
  * Сущность рабочее место с полями ID и описание.
  */
-@Getter
-@Setter
+@Data
 @Builder
-@EqualsAndHashCode
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Workplace {
 
     private Integer id;

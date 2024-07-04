@@ -17,8 +17,9 @@ public class BookingRepositoryJDBC implements BookingRepository {
     }
 
     protected Connection getConnection() throws SQLException {
-
-        String url = "jdbc:postgresql://db:5432/efficient_work?currentSchema=service_schema";
+        // if we connect from app, which located in a docker container we use this as a
+        // url: "jdbc:postgresql:/db:5432/efficient_work?currentSchema=service_schema"
+        String url = "jdbc:postgresql://localhost:5432/efficient_work?currentSchema=service_schema";
         String user = "root";
         String password = "password";
 

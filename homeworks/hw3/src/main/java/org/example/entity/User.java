@@ -5,11 +5,10 @@ import lombok.*;
 /**
  * Сущность пользователь с полями ID, имя, пароль.
  */
+@Data
 @Builder
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     private Integer id;

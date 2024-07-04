@@ -1,9 +1,6 @@
 package org.example.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -11,10 +8,10 @@ import java.time.LocalDateTime;
  * Сущность бронирование с полями ID, ID ресурса, дата начала бронирования,
  * дата конца бронирования, пользователь(забронировавший ресурс).
  */
-@Getter
-@Setter
+@Data
 @Builder
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class Booking {
 
     private Integer id;

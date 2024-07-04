@@ -5,11 +5,10 @@ import lombok.*;
 /**
  * Сущность пользователь с полями ID, описание, размер(в местах).
  */
+@Data
 @Builder
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class ConferenceHall {
 
     private Integer id;
