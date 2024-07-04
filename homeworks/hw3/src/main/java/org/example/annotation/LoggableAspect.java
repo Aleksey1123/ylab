@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.Pointcut;
 
 @Aspect
 public class LoggableAspect {
-    @Pointcut("within(@org.example.annotation.Loggable *) ** && execution(* * *(..))")
+    @Pointcut("within(@org.example.annotation.Loggable *) && execution(* * (..))")
     public void annotatedByLoggable() {
     }
 
