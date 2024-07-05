@@ -23,7 +23,7 @@ docker exec -it app java -cp app/app.jar org.example.Main
 После этого можно взаимодействовать в своём терминале с приложением также, как если бы оно было запущено не в контейнере.
 
 ## Ссылки
-- https://github.com/Aleksey1123/ylab/tree/master/homeworks/hw2
+- https://github.com/Aleksey1123/ylab/tree/hw2-feature/homeworks/hw2
 - https://github.com/Aleksey1123/ylab/pull/3
 
 # ДЗ №3
@@ -32,5 +32,5 @@ docker exec -it app java -cp app/app.jar org.example.Main
   Нужно скомпилировать проект в war-файл с помощью maven, затем положить папку склмпилированного проекта в папку webapps сервера TomCat. Сервер TomCat должен быть 10 версии или выше. Затем запустить сам сервер через батник startup в bin директории. После того как были проделаны все выше перечисленные действия можно отправлять запросы на сервер. Документация к api написана в java-doc сервлетов.
 
 ## Ссылки
-- https://github.com/Aleksey1123/ylab/tree/master/homeworks/hw3
+- https://github.com/Aleksey1123/ylab/tree/hw3-feature/homeworks/hw3
 - https://github.com/Aleksey1123/ylab/pull/4
