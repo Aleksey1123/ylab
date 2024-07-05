@@ -2,8 +2,9 @@ package org.example.mapper;
 
 import org.example.entity.Booking;
 import org.example.model.BookingDTO;
-import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 public interface BookingMapper {
 
@@ -12,4 +13,6 @@ public interface BookingMapper {
     BookingDTO bookingToBookingDTO(Booking booking);
 
     Booking bookingDTOToBooking(BookingDTO bookingDTO);
+
+    List<BookingDTO> bookingsToBookingDTOs(List<Booking> bookings);
 }

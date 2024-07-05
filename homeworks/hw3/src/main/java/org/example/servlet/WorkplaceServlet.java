@@ -24,6 +24,13 @@ public class WorkplaceServlet extends HttpServlet {
     private WorkplaceMapper workplaceMapper = WorkplaceMapper.INSTANCE;
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    /** This method returns a workplace specified by id parameter or returns
+     * all existing workplaces if id parameter is null.
+     * Requested Parameter:
+     * ?id=******* - id of any existing workplace
+     * or it will return all existing workplaces
+     *
+     * **/
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -34,6 +41,7 @@ public class WorkplaceServlet extends HttpServlet {
         else findAll(resp);
     }
 
+    /** This method are used by doGet(). It returns an existing workplace specified by id. **/
     private void findById(HttpServletResponse resp, String id) throws IOException {
 
         Workplace workplace = workplaceService.getWorkplaceById(id);
@@ -48,6 +56,7 @@ public class WorkplaceServlet extends HttpServlet {
         }
     }
 
+    /** This method are used by doGet(). It returns a json of all workplaces. **/
     private void findAll(HttpServletResponse resp) throws IOException {
 
         List<Workplace> workplaces = workplaceService.getAllWorkplaces();
@@ -57,6 +66,7 @@ public class WorkplaceServlet extends HttpServlet {
         printJson(resp, workplacesString);
     }
 
+    /** This method returns a json of a given string. **/
     private void printJson(HttpServletResponse resp, String stringObject) throws IOException {
 
         PrintWriter out = resp.getWriter();
@@ -66,16 +76,36 @@ public class WorkplaceServlet extends HttpServlet {
         out.flush();
     }
 
+    /** This method creates a new workplace via request body data.
+     *  Requested Body:
+     * {
+     *     "description": ******* - description of a future workplace
+     * }
+     *
+     * **/
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         WorkplaceDTO workplaceDTO =
                 objectMapper.readValue(req.getInputStream(), WorkplaceDTO.class);
         Workplace savedWorkplace = workplaceService.createWorkplace(workplaceDTO.getDescription());
-        resp.setStatus(HttpServletResponse.SC_CREATED);
-        objectMapper.writeValue(resp.getOutputStream(), savedWorkplace);
+        if (savedWorkplace != null) {
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            objectMapper.writeValue(resp.getOutputStream(), savedWorkplace);
+        }
+        else {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            printJson(resp, "");
+        }
     }
 
+    /** This method updates an existing workplace via request body data.
+     *  Requested Body:
+     * {
+     *     "description": ******* - description of an existing workplace
+     * }
+     *
+     * **/
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -90,6 +120,11 @@ public class WorkplaceServlet extends HttpServlet {
         else resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
+    /** This method deletes a workplace specified by id.
+     * Requested Parameter:
+     * ?id=******* - id of an existing workplace
+     *
+     * **/
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

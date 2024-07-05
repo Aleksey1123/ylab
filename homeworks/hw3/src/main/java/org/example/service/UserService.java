@@ -43,15 +43,15 @@ public class UserService {
      * Authorizes the user. Throws a RuntimeException in cases: if the user is already logged in,
      * if the username is incorrect. Returns true if the authorisation ends up successful otherwise - false.
      */
-    public boolean authorizeUser(String username, String password) {
+    public boolean authorizeUser(User userData) {
 
         try {
             if (authorisedUser != null)
                 throw new RuntimeException("You are already logged in as: " +
                         authorisedUser.getUsername() + ".");
 
-            User foundUser = repository.findByUsername(username);
-            if (foundUser == null || !foundUser.getPassword().equals(password)) {
+            User foundUser = repository.findByUsername(userData.getUsername());
+            if (foundUser == null || !foundUser.getPassword().equals(userData.getPassword())) {
                 throw new RuntimeException("Incorrect username or password, please try again!");
             }
             authorisedUser = foundUser;

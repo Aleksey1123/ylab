@@ -2,6 +2,7 @@ package org.example.service;
 
 import org.example.entity.Booking;
 import org.example.entity.User;
+import org.example.model.BookingPostRequest;
 import org.example.repository.BookingRepositoryJDBC;
 
 import java.time.LocalDateTime;
@@ -27,39 +28,52 @@ public class BookingService {
      * if there is a booking conflict, in case of conflict makeBooking() returns false,
      * otherwise - true.
      */
-    public boolean makeBooking(String resourceId, String resourceType,
-                               String startDateTimeString, String endDateTimeString) {
+    public Booking makeBooking(BookingPostRequest bookingRequest) {
 
         try {
             User user = userService.isAuthorised();
             if (user == null) {
                 System.out.println("You must log in before booking.");
-                return false;
+                return null;
             }
+
+            String resourceType = bookingRequest.getResourceType();
+            int resourceId = Integer.parseInt(bookingRequest.getResourceId());
+            LocalDateTime startTime = LocalDateTime.parse(bookingRequest.getStartDateTimeString());
+            LocalDateTime endTime = LocalDateTime.parse(bookingRequest.getEndDateTimeString());
+            Booking booking;
 
             if (!resourceType.equals("W") && !resourceType.equals("H")) {
                 System.out.println("Invalid resource type: " + resourceType);
-                return false;
+                return null;
             }
 
-            LocalDateTime startTime = LocalDateTime.parse(startDateTimeString);
-            LocalDateTime endTime = LocalDateTime.parse(endDateTimeString);
-            Booking booking = Booking.builder()
-                    .workplaceId(Integer.valueOf(resourceId))
-                    .startTime(startTime)
-                    .endTime(endTime)
-                    .user(user)
-                    .build();
+            if (resourceType.equals("W")) {
+                booking = Booking.builder()
+                        .workplaceId(resourceId)
+                        .hallId(null)
+                        .startTime(startTime)
+                        .endTime(endTime)
+                        .user(user)
+                        .build();
+            }
+            else {
+                booking = Booking.builder()
+                        .workplaceId(null)
+                        .hallId(resourceId)
+                        .startTime(startTime)
+                        .endTime(endTime)
+                        .user(user)
+                        .build();
+            }
 
-            List<Booking> conflictList = repository.findAllBookingsByResource(Integer.valueOf(resourceId))
+            List<Booking> conflictList = repository.findAllBookingsByResource(resourceId)
                     .stream()
                     .filter(b -> b.getStartTime().isBefore(endTime) && b.getEndTime().isAfter(startTime))
                     .toList();
 
-            if (conflictList.isEmpty()) {
-                repository.save(booking);
-                return true;
-            }
+            if (conflictList.isEmpty())
+                return repository.save(booking);
         }
         catch (DateTimeParseException e) {
             System.out.println("Incorrect date entered.");
@@ -68,27 +82,28 @@ public class BookingService {
             System.out.println("All entered ID's must be Integer type.");
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Cancels booking. Method throws a RuntimeException in case of incorrect booking ID.
      */
-    public boolean cancelBooking(String bookingId) {
+    public Booking cancelBooking(String bookingId) {
 
         try {
-            if (repository.deleteById(Integer.valueOf(bookingId)) == null) {
+            Booking deletedBooking = repository.deleteById(Integer.valueOf(bookingId));
+            if (deletedBooking == null) {
                 System.out.println("Incorrect booking ID, please try again.");
-                return false;
+                return null;
             }
 
-            return true;
+            return deletedBooking;
         }
         catch (NumberFormatException e) {
             System.out.println(e.getMessage());
         }
 
-        return false;
+        return null;
     }
 
     /** Returns all bookings of the current day. **/
