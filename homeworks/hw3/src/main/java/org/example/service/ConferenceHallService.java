@@ -8,7 +8,7 @@ import java.util.List;
 /** This service corresponds for work with ConferenceHall Entities. **/
 public class ConferenceHallService {
 
-    private ConferenceHallRepositoryJDBC repository;
+    protected ConferenceHallRepositoryJDBC repository;
 
     public ConferenceHallService() {
         this.repository = new ConferenceHallRepositoryJDBC();

@@ -22,10 +22,9 @@ import java.util.List;
 @WebServlet(name = "BookingServlet", urlPatterns = "/booking")
 public class BookingServlet extends HttpServlet {
 
-    private final BookingService bookingService =
-            new BookingService(UserServlet.userService);
-    private final BookingMapper bookingMapper = BookingMapper.INSTANCE;
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    protected BookingService bookingService = new BookingService(UserServlet.userService);
+    protected BookingMapper bookingMapper = BookingMapper.INSTANCE;
+    protected ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     /** This method returns a list of bookings filtered by given parameters.
      *
@@ -69,8 +68,6 @@ public class BookingServlet extends HttpServlet {
     private void findAllByResource(HttpServletResponse resp, String resourceId) throws IOException {
 
         List<Booking> bookings = bookingService.getAllBookingsByResource(resourceId);
-        printJson(resp, objectMapper.writeValueAsString(resourceId));
-
         List<BookingDTO> bookingDTOs =
                 bookingMapper.bookingsToBookingDTOs(bookings);
         String bookingString = objectMapper.writeValueAsString(bookingDTOs);

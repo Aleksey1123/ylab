@@ -10,7 +10,7 @@ import java.util.List;
 @Loggable
 public class WorkplaceService {
 
-    private WorkplaceRepositoryJDBC repository;
+    protected WorkplaceRepositoryJDBC repository;
 
     public WorkplaceService() {
         repository = new WorkplaceRepositoryJDBC();

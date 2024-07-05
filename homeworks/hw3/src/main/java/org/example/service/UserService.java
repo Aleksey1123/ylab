@@ -8,8 +8,8 @@ import java.util.Map;
 /** This service corresponds for work with User Entities. **/
 public class UserService {
 
-    private UserRepositoryJDBC repository;
-    private User authorisedUser;
+    protected UserRepositoryJDBC repository;
+    protected User authorisedUser;
 
     public UserService() {
         repository = new UserRepositoryJDBC();

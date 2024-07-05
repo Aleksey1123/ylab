@@ -15,7 +15,7 @@ import java.util.List;
 public class BookingService {
 
     private UserService userService;
-    private BookingRepositoryJDBC repository;
+    protected BookingRepositoryJDBC repository;
 
     public BookingService(UserService userService) {
         this.userService = userService;

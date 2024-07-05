@@ -1,76 +1,129 @@
-//package org.example.service;
-//
-//import org.example.entity.Workplace;
-//import org.example.repository.WorkplaceRepository;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//
-//import java.util.List;
-//import java.util.UUID;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.Mockito.when;
-//
-//@ExtendWith(MockitoExtension.class)
-//class WorkplaceServiceTest {
-//
-//    @Mock
-//    private WorkplaceRepository repository;
-//    @InjectMocks
-//    private WorkplaceService service;
-//
-//    private final String id = UUID.randomUUID().toString();
-//    private final String testDescription = "test";
-//
-//    private final Workplace testWorkplace = Workplace.builder()
-//            .id(UUID.randomUUID())
-//            .description(testDescription)
-//            .build();
-//
-//    @Test
-//    void testCreateWorkplace() {
-//
-//        when(repository.save(any())).thenReturn(null);
-//        Workplace workplace = service.createWorkplace(testDescription);
-//        assertThat(workplace).isEqualTo(null);
-//    }
-//
-//    @Test
-//    void testGetWorkplaceById() {
-//
-//        when(repository.findById(any())).thenReturn(testWorkplace);
-//        Workplace workplace = service.getWorkplaceById(id);
-//        assertThat(workplace).isEqualTo(testWorkplace);
-//    }
-//
-//    @Test
-//    void testGetAllWorkplaces() {
-//
-//        when(repository.findAll()).thenReturn(List.of(testWorkplace));
-//        List<Workplace> workplaces = service.getAllWorkplaces();
-//        assertThat(workplaces).hasSize(1);
-//        assertThat(workplaces.get(0)).isEqualTo(testWorkplace);
-//    }
-//
-//    @Test
-//    void testUpdateWorkplace() {
-//
-//        String newDescription = "new";
-//
-//        when(repository.findById(any())).thenReturn(testWorkplace);
-//        Workplace workplace = service.updateWorkplace(id, newDescription);
-//        assertThat(workplace.getDescription()).isEqualTo(newDescription);
-//    }
-//
-//    @Test
-//    void testDeleteWorkplace() {
-//
-//        when(repository.deleteById(any())).thenReturn(null);
-//        Workplace workplace = service.deleteWorkplace(id);
-//        assertThat(workplace).isEqualTo(null);
-//    }
-//}
+package org.example.service;
+
+import org.example.entity.Workplace;
+import org.example.repository.WorkplaceRepositoryJDBC;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
+class WorkplaceServiceTest {
+
+    private WorkplaceService workplaceService;
+    private WorkplaceRepositoryJDBC workplaceRepository;
+
+    @BeforeEach
+    void setUp() {
+        workplaceRepository = mock(WorkplaceRepositoryJDBC.class);
+        workplaceService = new WorkplaceService();
+        workplaceService.repository = workplaceRepository;
+    }
+
+    @Test
+    void testCreateWorkplaceSuccess() {
+        Workplace workplace = new Workplace();
+        when(workplaceRepository.save(anyString())).thenReturn(workplace);
+
+        Workplace result = workplaceService.createWorkplace("description");
+        assertNotNull(result);
+        verify(workplaceRepository, times(1)).save(anyString());
+    }
+
+    @Test
+    void testGetWorkplaceByIdSuccess() {
+        Workplace workplace = new Workplace();
+        when(workplaceRepository.findById(anyInt())).thenReturn(workplace);
+
+        Workplace result = workplaceService.getWorkplaceById("1");
+        assertNotNull(result);
+        verify(workplaceRepository, times(1)).findById(anyInt());
+    }
+
+    @Test
+    void testGetWorkplaceByIdNotFound() {
+        when(workplaceRepository.findById(anyInt())).thenReturn(null);
+
+        Workplace result = workplaceService.getWorkplaceById("1");
+        assertNull(result);
+        verify(workplaceRepository, times(1)).findById(anyInt());
+    }
+
+    @Test
+    void testGetWorkplaceByIdInvalidId() {
+        Workplace result = workplaceService.getWorkplaceById("invalid");
+        assertNull(result);
+        verify(workplaceRepository, times(0)).findById(anyInt());
+    }
+
+    @Test
+    void testGetAllWorkplaces() {
+        List<Workplace> workplaces = List.of(new Workplace());
+        when(workplaceRepository.findAll()).thenReturn(workplaces);
+
+        List<Workplace> result = workplaceService.getAllWorkplaces();
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(workplaceRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testUpdateWorkplaceSuccess() {
+        Workplace workplace = new Workplace();
+        when(workplaceRepository.findById(anyInt())).thenReturn(workplace);
+        when(workplaceRepository.update(anyInt(), anyString())).thenReturn(workplace);
+
+        Workplace result = workplaceService.updateWorkplace("1", "new description");
+        assertNotNull(result);
+        verify(workplaceRepository, times(1)).findById(anyInt());
+        verify(workplaceRepository, times(1)).update(anyInt(), anyString());
+    }
+
+    @Test
+    void testUpdateWorkplaceNotFound() {
+        when(workplaceRepository.findById(anyInt())).thenReturn(null);
+
+        Workplace result = workplaceService.updateWorkplace("1", "new description");
+        assertNull(result);
+        verify(workplaceRepository, times(1)).findById(anyInt());
+        verify(workplaceRepository, times(0)).update(anyInt(), anyString());
+    }
+
+    @Test
+    void testUpdateWorkplaceInvalidId() {
+        Workplace result = workplaceService.updateWorkplace("invalid", "new description");
+        assertNull(result);
+        verify(workplaceRepository, times(0)).findById(anyInt());
+        verify(workplaceRepository, times(0)).update(anyInt(), anyString());
+    }
+
+    @Test
+    void testDeleteWorkplaceSuccess() {
+        Workplace workplace = new Workplace();
+        when(workplaceRepository.deleteById(anyInt())).thenReturn(workplace);
+
+        Workplace result = workplaceService.deleteWorkplace("1");
+        assertNotNull(result);
+        verify(workplaceRepository, times(1)).deleteById(anyInt());
+    }
+
+    @Test
+    void testDeleteWorkplaceNotFound() {
+        when(workplaceRepository.deleteById(anyInt())).thenReturn(null);
+
+        Workplace result = workplaceService.deleteWorkplace("1");
+        assertNull(result);
+        verify(workplaceRepository, times(1)).deleteById(anyInt());
+    }
+
+    @Test
+    void testDeleteWorkplaceInvalidId() {
+        Workplace result = workplaceService.deleteWorkplace("invalid");
+        assertNull(result);
+        verify(workplaceRepository, times(0)).deleteById(anyInt());
+    }
+}
