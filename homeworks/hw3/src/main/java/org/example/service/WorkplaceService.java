@@ -16,12 +16,16 @@ public class WorkplaceService {
         repository = new WorkplaceRepositoryJDBC();
     }
 
-    // Методы для управления рабочими местами
+    /** This method creates and returns a new workplace with specific description and size. Throws
+     * a NumberFormatException if the hall size is not a number. **/
     public Workplace createWorkplace(String description) {
 
         return repository.save(description);
     }
 
+    /** This method returns existing workplace from a database. This method outputs
+     * error if no workplace with such id exists or throws
+     * a NumberFormatException if the hall size is not a number. **/
     public Workplace getWorkplaceById(String workplaceId) {
 
         try {
@@ -32,17 +36,22 @@ public class WorkplaceService {
             return workplace;
         }
         catch (NumberFormatException e) {
-            System.out.println("Workspace id must be an integer!");
+            System.out.println("Workplace id must be an integer!");
         }
 
         return null;
     }
 
+    /** This method returns existing workplace from a database. This method outputs
+     * all existing workplaces. **/
     public List<Workplace> getAllWorkplaces() {
 
         return repository.findAll();
     }
 
+    /** This method updates and returns existing workplace from a database. This method outputs
+     * error if no workplace with such id exists or throws
+     * a NumberFormatException if the hall size is not a number. **/
     public Workplace updateWorkplace(String workspaceId, String description) {
 
         try {
@@ -55,12 +64,15 @@ public class WorkplaceService {
             return repository.update(idInt, description);
         }
         catch (NumberFormatException e) {
-            System.out.println("Workspace id must be an integer!");
+            System.out.println("Workplace id must be an integer!");
         }
 
         return null;
     }
 
+    /** This method deletes and returns existing workplace from a database. This method outputs
+     * error if no workplace with such id exists or throws
+     * a NumberFormatException if the hall size is not a number. **/
     public Workplace deleteWorkplace(String workspaceId) {
 
         try {
@@ -74,7 +86,7 @@ public class WorkplaceService {
             return workplace;
         }
         catch (NumberFormatException e) {
-            System.out.println("Workspace id must be an integer!");
+            System.out.println("Workplace id must be an integer!");
         }
 
         return null;

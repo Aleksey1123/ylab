@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+/** An interface for BookingRepositoryJDBC **/
 public interface BookingRepository {
 
     Booking save(Booking booking);

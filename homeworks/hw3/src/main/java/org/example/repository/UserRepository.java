@@ -4,6 +4,7 @@ import org.example.entity.User;
 
 import java.util.Map;
 
+/** An interface for UserRepositoryJDBC **/
 public interface UserRepository {
 
     User save(String username, String password);

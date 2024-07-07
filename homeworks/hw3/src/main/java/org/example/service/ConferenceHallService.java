@@ -14,6 +14,8 @@ public class ConferenceHallService {
         this.repository = new ConferenceHallRepositoryJDBC();
     }
 
+    /** This method creates and returns a new conferenceHall with specific description and size. Throws
+     * a NumberFormatException if the hall size is not a number. **/
     public ConferenceHall createConferenceHall(String description, String size) {
 
         try {
@@ -26,6 +28,9 @@ public class ConferenceHallService {
         return null;
     }
 
+    /** This method returns existing conferenceHall from a database. This method outputs
+     * error if no conferenceHall with such id exists or throws
+     * a NumberFormatException if the hall size is not a number. **/
     public ConferenceHall getConferenceHallById(String hallId) {
 
         try {
@@ -42,11 +47,16 @@ public class ConferenceHallService {
         return null;
     }
 
+    /** This method returns existing conferenceHall from a database. This method outputs
+    * all existing conferenceHalls. **/
     public List<ConferenceHall> getAllConferenceHalls() {
 
         return repository.findAll();
     }
 
+    /** This method updates and returns existing conferenceHall from a database. This method outputs
+     * error if no conferenceHall with such id exists or throws
+     * a NumberFormatException if the hall size is not a number. **/
     public ConferenceHall updateConferenceHall(String hallId, String description, String size) {
 
         int hallIdInt;
@@ -75,6 +85,9 @@ public class ConferenceHallService {
         return repository.update(hallIdInt, description, sizeInt);
     }
 
+    /** This method deletes and returns existing conferenceHall from a database. This method outputs
+     * error if no conferenceHall with such id exists or throws
+     * a NumberFormatException if the hall size is not a number. **/
     public ConferenceHall deleteConferenceHall(String hallId) {
 
         try {

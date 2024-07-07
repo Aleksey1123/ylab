@@ -6,8 +6,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Repository for workplace entity with basic CRUD operations. **/
 public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
 
+    /** This method manages the connection between app and database. **/
     protected Connection getConnection() throws SQLException {
         // if we connect from app, which located in a docker container we use this as a
         // url: "jdbc:postgresql:/db:5432/efficient_work?currentSchema=service_schema"
@@ -18,6 +20,7 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
         return DriverManager.getConnection(url, user, password);
     }
 
+    /** This method takes result set and returns a new created workplace. **/
     private Workplace mapWorkplace(ResultSet set) throws SQLException {
         int workplaceId = set.getInt("id");
         String description = set.getString("description");
@@ -28,6 +31,7 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
                 .build();
     }
 
+    /** This method saves workplace entity to a database. **/
     @Override
     public Workplace save(String description) {
 
@@ -55,6 +59,8 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
         return null;
     }
 
+    /** This method updates an existing workplace from a database by specific id, if
+     * such workplace doesn't exist method will output the error. **/
     @Override
     public Workplace update(Integer workplaceId, String description) {
 
@@ -84,6 +90,8 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
         return null;
     }
 
+    /** This method returns an existing workplace from a database by specific id, if
+     * the query has an error this method will output the sql exception. **/
     @Override
     public Workplace findById(Integer workplaceId) {
 
@@ -107,6 +115,8 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
         return null;
     }
 
+    /** This method returns all workplaces from a database, if
+     * the query has a mistake this method will output the sql exception. **/
     @Override
     public List<Workplace> findAll() {
 
@@ -130,6 +140,8 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
         return null;
     }
 
+    /** This method deletes an existing workplace from a database by specific id, if
+     * such workplace doesn't exist method will output the error. **/
     @Override
     public Workplace deleteById(Integer workplaceId) {
 

@@ -15,6 +15,8 @@ public class UserService {
         repository = new UserRepositoryJDBC();
     }
 
+    /** Creates a new user with a specific username and password. Throws a RuntimeException
+     * if username is null or if such username is already exists.**/
     public User addUser(String username, String password) {
 
         try {

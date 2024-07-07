@@ -4,6 +4,7 @@ import org.example.entity.ConferenceHall;
 
 import java.util.List;
 
+/** An interface for ConferenceHallRepositoryJDBC **/
 public interface ConferenceHallRepository {
 
     ConferenceHall save(String description, Integer size);

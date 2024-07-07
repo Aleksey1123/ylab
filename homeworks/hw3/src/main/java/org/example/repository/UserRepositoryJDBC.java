@@ -6,8 +6,10 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/** Repository for user entity with basic CRUD operations. **/
 public class UserRepositoryJDBC implements UserRepository {
 
+    /** This method manages the connection between app and database. **/
     public Connection getConnection() throws SQLException {
         // if we connect from app, which located in a docker container we use this as a
         // url: "jdbc:postgresql:/db:5432/efficient_work?currentSchema=service_schema"
@@ -18,6 +20,7 @@ public class UserRepositoryJDBC implements UserRepository {
         return DriverManager.getConnection(url, user, password);
     }
 
+    /** This method takes result set and returns a new created user. **/
     private User mapUser(ResultSet set) throws SQLException {
         int userId = set.getInt("id");
         String username = set.getString("username");
@@ -30,6 +33,7 @@ public class UserRepositoryJDBC implements UserRepository {
                 .build();
     }
 
+    /** This method saves user entity to a database. **/
     @Override
     public User save(String username, String password) {
 
@@ -59,6 +63,8 @@ public class UserRepositoryJDBC implements UserRepository {
         return null;
     }
 
+    /** This method returns an existing user from a database by specific username, if
+     * the query has an error this method will output the sql exception. **/
     @Override
     public User findByUsername(String username) {
 
@@ -82,6 +88,8 @@ public class UserRepositoryJDBC implements UserRepository {
         return null;
     }
 
+    /** This method returns an existing user from a database by specific id, if
+     * the query has an error this method will output the sql exception. **/
     @Override
     public User findById(Integer userId) {
 
@@ -105,6 +113,8 @@ public class UserRepositoryJDBC implements UserRepository {
         return null;
     }
 
+    /** This method returns all users from a database, if
+     * the query has a mistake this method will output the sql exception. **/
     @Override
     public Map<String, User> findAll() {
 

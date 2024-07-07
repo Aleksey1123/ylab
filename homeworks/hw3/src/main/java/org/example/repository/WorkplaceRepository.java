@@ -4,6 +4,7 @@ import org.example.entity.Workplace;
 
 import java.util.List;
 
+/** An interface for WorkplaceRepositoryJDBC **/
 public interface WorkplaceRepository {
 
     Workplace save(String description);
