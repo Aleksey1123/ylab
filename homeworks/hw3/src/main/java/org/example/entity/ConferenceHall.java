@@ -1,5 +1,6 @@
 package org.example.entity;
 
+/** Entity class for storing and creating new conference halls. **/
 public class ConferenceHall {
     private Integer id;
     private String description;

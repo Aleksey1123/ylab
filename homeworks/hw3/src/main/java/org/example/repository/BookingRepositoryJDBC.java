@@ -8,6 +8,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
+/** Repository for booking entity with basic CRUD operations. **/
 public class BookingRepositoryJDBC implements BookingRepository {
 
     private UserRepository userRepository;
@@ -16,6 +17,7 @@ public class BookingRepositoryJDBC implements BookingRepository {
         userRepository = new UserRepositoryJDBC();
     }
 
+    /** This method manages the connection between app and database. **/
     protected Connection getConnection() throws SQLException {
         // if we connect from app, which located in a docker container we use this as a
         // url: "jdbc:postgresql:/db:5432/efficient_work?currentSchema=service_schema"
@@ -26,6 +28,7 @@ public class BookingRepositoryJDBC implements BookingRepository {
         return DriverManager.getConnection(url, user, password);
     }
 
+    /** This method takes result set and returns a new created booking. **/
     private Booking mapBooking(ResultSet set) throws SQLException {
         int bookingId = set.getInt("id");
         Integer workplaceId = set.getInt("workplace_id");
@@ -57,6 +60,7 @@ public class BookingRepositoryJDBC implements BookingRepository {
     }
 
 
+    /** This method saves Booking entity to a database. **/
     @Override
     public Booking save(Booking booking) {
 
@@ -99,6 +103,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
         return null;
     }
 
+    /** This method deletes an existing booking from a database by specific id, if
+     * such booking doesn't exist method will output the error. **/
     @Override
     public Booking deleteById(Integer bookingId) {
 
@@ -130,6 +136,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
         return null;
     }
 
+    /** This method returns an existing booking from a database by specific id, if
+     * the query has an error this method will output the sql exception. **/
     public Booking findById(Integer bookingId) {
 
         String sql = "SELECT b.*, u.username, u.password FROM bookings b JOIN users u" +
@@ -151,6 +159,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
         return null;
     }
 
+    /** This method returns all bookings filtered by a specific date from a database, if
+     * the query has a mistake this method will output the sql exception. **/
     @Override
     public List<Booking> findAllBookingsByDate(LocalDateTime date) {
 
@@ -177,6 +187,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
         return null;
     }
 
+    /** This method returns all bookings filtered by a specific user from a database, if
+     * the query has a mistake this method will output the sql exception. **/
     @Override
     public List<Booking> findAllBookingsByUser(String username) {
 
@@ -207,6 +219,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
         return null;
     }
 
+    /** This method returns all bookings from a database filtered by a specific resource, if
+     * the query has a mistake this method will output the sql exception. **/
     @Override
     public List<Booking> findAllBookingsByResource(Integer resourceId) {
 
@@ -235,6 +249,8 @@ public class BookingRepositoryJDBC implements BookingRepository {
         return null;
     }
 
+    /** This method returns all bookings from a database, if
+     * the query has a mistake this method will output the sql exception. **/
     @Override
     public Map<Integer, Booking> findAllBookings() {
 

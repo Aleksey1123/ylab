@@ -6,8 +6,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Repository for hall entity with basic CRUD operations. **/
 public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
 
+    /** This method manages the connection between app and database. **/
     protected Connection getConnection() throws SQLException {
         // if we connect from app, which located in a docker container we use this as a
         // url: "jdbc:postgresql:/db:5432/efficient_work?currentSchema=service_schema"
@@ -18,6 +20,7 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
         return DriverManager.getConnection(url, user, password);
     }
 
+    /** This method takes result set and returns a new created hall. **/
     private ConferenceHall mapConferenceHall(ResultSet set) throws SQLException {
         Integer hallId = set.getInt("id");
         String description = set.getString("description");
@@ -30,6 +33,7 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
                 .build();
     }
 
+    /** This method saves hall entity to a database. **/
     @Override
     public ConferenceHall save(String description, Integer size) {
 
@@ -59,6 +63,8 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
         return null;
     }
 
+    /** This method updates an existing hall from a database by specific id, if
+     * such hall doesn't exist method will output the error. **/
     @Override
     public ConferenceHall update(Integer hallId, String description, int size) {
 
@@ -90,6 +96,8 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
         return null;
     }
 
+    /** This method returns an existing hall from a database by specific id, if
+     * the query has an error this method will output the sql exception. **/
     @Override
     public ConferenceHall findById(Integer hallId) {
 
@@ -113,6 +121,8 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
         return null;
     }
 
+    /** This method returns all halls from a database, if
+     * the query has a mistake this method will output the sql exception. **/
     @Override
     public List<ConferenceHall> findAll() {
 
@@ -136,6 +146,8 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
         return null;
     }
 
+    /** This method deletes an existing hall from a database by specific id, if
+     * such hall doesn't exist method will output the error. **/
     @Override
     public ConferenceHall deleteById(Integer hallId) {
 

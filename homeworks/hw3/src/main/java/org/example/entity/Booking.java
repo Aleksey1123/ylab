@@ -2,6 +2,7 @@ package org.example.entity;
 
 import java.time.LocalDateTime;
 
+/** Entity class for storing and creating new bookings. **/
 public class Booking {
     private Integer id;
     private Integer workplaceId;

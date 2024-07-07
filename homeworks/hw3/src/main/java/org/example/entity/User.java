@@ -1,10 +1,6 @@
 package org.example.entity;
 
-import lombok.*;
-
-/**
- * Сущность пользователь с полями ID, имя, пароль.
- */
+/** Entity class for storing and creating new users. **/
 public class User {
     private Integer id;
     private String username;

@@ -1,5 +1,7 @@
 package org.example.model;
 
+
+/** DTO class for user interactions with the booking entity. **/
 public class BookingPostRequest {
     String resourceId;
     String resourceType;

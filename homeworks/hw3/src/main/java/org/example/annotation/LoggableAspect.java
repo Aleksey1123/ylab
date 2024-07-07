@@ -5,6 +5,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
+
+/** Aspect for logging all action of the user. **/
 @Aspect
 public class LoggableAspect {
     @Pointcut("within(@org.example.annotation.Loggable *) && execution(* * (..))")

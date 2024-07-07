@@ -4,6 +4,7 @@ import org.example.entity.User;
 
 import java.time.LocalDateTime;
 
+/** DTO class for user interactions with the booking entity. **/
 public class BookingDTO {
     private Integer id;
     private Integer workplaceId;

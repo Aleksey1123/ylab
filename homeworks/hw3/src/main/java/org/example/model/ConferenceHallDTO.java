@@ -2,6 +2,7 @@ package org.example.model;
 
 import javax.validation.constraints.NotBlank;
 
+/** DTO class for user interactions with the conferenceHall entity. **/
 public class ConferenceHallDTO {
     private Integer id;
     private @NotBlank(

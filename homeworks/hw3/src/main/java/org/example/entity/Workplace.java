@@ -1,11 +1,6 @@
 package org.example.entity;
 
-import lombok.*;
-
-
-/**
- * Сущность рабочее место с полями ID и описание.
- */
+/** Entity class for storing and creating new workplaces. **/
 public class Workplace {
     private Integer id;
     private String description;
