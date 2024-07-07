@@ -20,15 +20,15 @@ import java.util.List;
 @WebServlet(name = "ConferenceHallServlet", urlPatterns = "/conferenceHall")
 public class ConferenceHallServlet extends HttpServlet {
 
-    private ConferenceHallService conferenceHallService = new ConferenceHallService();
-    private ConferenceHallMapper conferenceHallMapper = ConferenceHallMapper.INSTANCE;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    protected ConferenceHallService conferenceHallService = new ConferenceHallService();
+    protected ConferenceHallMapper conferenceHallMapper = ConferenceHallMapper.INSTANCE;
+    protected ObjectMapper objectMapper = new ObjectMapper();
 
     /** This method returns a ConferenceHall specified by id parameter or returns
      * all existing ConferenceHalls if id parameter is null.
      * Requested Parameter:
      * ?id=******* - id of any existing ConferenceHall
-     * or it will return all existing ConferenceHalls 
+     * or it will return all existing ConferenceHalls
      *
      * **/
     @Override

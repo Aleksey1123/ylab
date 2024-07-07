@@ -20,9 +20,9 @@ import java.util.List;
 @WebServlet(name = "WorkplaceServlet", urlPatterns = "/workplace")
 public class WorkplaceServlet extends HttpServlet {
 
-    private WorkplaceService workplaceService = new WorkplaceService();
-    private WorkplaceMapper workplaceMapper = WorkplaceMapper.INSTANCE;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    protected WorkplaceService workplaceService = new WorkplaceService();
+    protected WorkplaceMapper workplaceMapper = WorkplaceMapper.INSTANCE;
+    protected ObjectMapper objectMapper = new ObjectMapper();
 
     /** This method returns a workplace specified by id parameter or returns
      * all existing workplaces if id parameter is null.

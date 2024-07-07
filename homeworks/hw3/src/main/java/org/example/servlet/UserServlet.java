@@ -22,8 +22,8 @@ import java.util.List;
 public class UserServlet extends HttpServlet {
 
     public static UserService userService = new UserService();
-    private final UserMapper userMapper = UserMapper.INSTANCE;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    protected UserMapper userMapper = UserMapper.INSTANCE;
+    protected ObjectMapper objectMapper = new ObjectMapper();
 
     /** This method returns a user specified by username parameter or returns
      * all registered users if username parameter is null.
