@@ -1,6 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.annotation.Loggable;
 import org.example.entity.ConferenceHall;
 import org.example.exception.EntityNotFoundException;
 import org.example.exception.InvalidIdTypeException;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 /** This service corresponds for work with ConferenceHall Entities. **/
 @Service
@@ -22,6 +22,7 @@ public class ConferenceHallService {
 
     /** This method creates and returns a new conferenceHall with specific description and size. Throws
      * a NumberFormatException if the hall size is not a number. **/
+    @Loggable
     public ConferenceHall createConferenceHall(ConferenceHallDTO conferenceHallDTO) throws SQLException {
 
         try {
@@ -36,6 +37,7 @@ public class ConferenceHallService {
     /** This method returns existing conferenceHall from a database. This method outputs
      * error if no conferenceHall with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
+    @Loggable
     public ConferenceHall getConferenceHallById(String hallId) throws SQLException {
 
         ConferenceHall hall;
@@ -54,6 +56,7 @@ public class ConferenceHallService {
 
     /** This method returns existing conferenceHall from a database. This method outputs
     * all existing conferenceHalls. **/
+    @Loggable
     public List<ConferenceHall> getAllConferenceHalls() throws SQLException {
 
         return repository.findAll();
@@ -62,6 +65,7 @@ public class ConferenceHallService {
     /** This method updates and returns existing conferenceHall from a database. This method outputs
      * error if no conferenceHall with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
+    @Loggable
     public ConferenceHall updateConferenceHall(String hallId, ConferenceHallDTO conferenceHallDTO) throws SQLException {
 
         int hallIdInt;
@@ -89,6 +93,7 @@ public class ConferenceHallService {
     /** This method deletes and returns existing conferenceHall from a database. This method outputs
      * error if no conferenceHall with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
+    @Loggable
     public ConferenceHall deleteConferenceHall(String hallId) throws SQLException {
 
         try {

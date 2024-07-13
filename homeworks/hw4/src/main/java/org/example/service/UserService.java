@@ -1,6 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.annotation.Loggable;
 import org.example.entity.User;
 import org.example.exception.*;
 import org.example.model.UserDTO;
@@ -20,6 +21,7 @@ public class UserService {
 
     /** Creates a new user with a specific username and password. Throws a RuntimeException
      * if username is null or if such username is already exists.**/
+    @Loggable
     public User addUser(UserDTO userDTO) throws SQLException {
 
         String username = userDTO.getUsername();
@@ -41,6 +43,7 @@ public class UserService {
      * Authorizes the user. Throws a RuntimeException in cases: if the user is already logged in,
      * if the username is incorrect. Returns true if the authorisation ends up successful otherwise - false.
      */
+    @Loggable
     public User authorizeUser(UserDTO userDTO) throws SQLException {
 
         if (authorisedUser != null) {
@@ -61,6 +64,7 @@ public class UserService {
      * Logout by changing the authorisedUser variable.
      * Method throws a RuntimeException in case the user is not logged in (authorisedUser == null).
      */
+    @Loggable
     public boolean logOut() {
 
         if (authorisedUser == null) {
@@ -71,18 +75,21 @@ public class UserService {
         return true;
     }
 
+    @Loggable
     public User isAuthorised() {
 
         return authorisedUser;
     }
 
     /** Outputs all registered users. **/
+    @Loggable
     public Map<String, User> getAllUsers() throws SQLException {
 
         return repository.findAll();
     }
 
     /** Outputs the user. **/
+    @Loggable
     public User findUserByUsername(String username) throws SQLException {
 
         return repository.findByUsername(username);

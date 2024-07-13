@@ -1,6 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.annotation.Loggable;
 import org.example.entity.Workplace;
 import org.example.exception.EntityNotFoundException;
 import org.example.exception.InvalidIdTypeException;
@@ -20,6 +21,7 @@ public class WorkplaceService {
 
     /** This method creates and returns a new workplace with specific description and size. Throws
      * a NumberFormatException if the hall size is not a number. **/
+    @Loggable
     public Workplace createWorkplace(WorkplaceDTO workplaceDTO) throws SQLException {
 
         return repository.save(workplaceDTO);
@@ -28,6 +30,7 @@ public class WorkplaceService {
     /** This method returns existing workplace from a database. This method outputs
      * error if no workplace with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
+    @Loggable
     public Workplace getWorkplaceById(String workplaceId) {
 
         try {
@@ -45,6 +48,7 @@ public class WorkplaceService {
 
     /** This method returns existing workplace from a database. This method outputs
      * all existing workplaces. **/
+    @Loggable
     public List<Workplace> getAllWorkplaces() throws SQLException {
 
         return repository.findAll();
@@ -53,6 +57,7 @@ public class WorkplaceService {
     /** This method updates and returns existing workplace from a database. This method outputs
      * error if no workplace with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
+    @Loggable
     public Workplace updateWorkplace(String workspaceId, WorkplaceDTO workplaceDTO) throws SQLException {
 
         int idInt;
@@ -71,6 +76,7 @@ public class WorkplaceService {
     /** This method deletes and returns existing workplace from a database. This method outputs
      * error if no workplace with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
+    @Loggable
     public Workplace deleteWorkplace(String workspaceId) throws SQLException {
 
         try {

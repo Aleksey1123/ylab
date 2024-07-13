@@ -1,9 +1,9 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.annotation.Loggable;
 import org.example.entity.Booking;
 import org.example.entity.User;
-import org.example.exception.EntityNotFoundException;
 import org.example.exception.InvalidIdException;
 import org.example.exception.InvalidResourceTypeException;
 import org.example.exception.NotAuthorizedException;
@@ -32,6 +32,7 @@ public class BookingService {
      * if there is a booking conflict, in case of conflict makeBooking() returns false,
      * otherwise - true.
      */
+    @Loggable
     public Optional<Booking> makeBooking(BookingPostRequest bookingRequest) throws SQLException {
 
         User user = userService.isAuthorised();
@@ -83,6 +84,7 @@ public class BookingService {
     /**
      * Cancels booking. Method throws a RuntimeException in case of incorrect booking ID.
      */
+    @Loggable
     public Optional<Booking> cancelBooking(String bookingId) throws SQLException {
 
         if (bookingId == null) {
@@ -94,23 +96,27 @@ public class BookingService {
     }
 
     /** Returns all bookings of the current day. **/
+    @Loggable
     public List<Booking> getAllBookingsByDate(String startDateTimeString) throws SQLException {
 
         LocalDateTime date = LocalDateTime.parse(startDateTimeString);
         return bookingRepository.findAllBookingsByDate(date);
     }
 
+    @Loggable
     public List<Booking> getAllBookingsByUser(String username) throws SQLException {
 
         return bookingRepository.findAllBookingsByUser(username);
     }
 
+    @Loggable
     public List<Booking> getAllBookingsByResource(String resourceId) throws SQLException {
 
         int id = Integer.parseInt(resourceId);
         return bookingRepository.findAllBookingsByResource(id);
     }
 
+    @Loggable
     public List<Booking> getAllBookings() throws SQLException {
 
         return new ArrayList<>(bookingRepository.findAllBookings().values());
