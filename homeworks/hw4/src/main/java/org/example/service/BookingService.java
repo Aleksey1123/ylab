@@ -33,7 +33,7 @@ public class BookingService {
      * otherwise - true.
      */
     @Loggable
-    public Optional<Booking> makeBooking(BookingPostRequest bookingRequest) throws SQLException {
+    public Booking makeBooking(BookingPostRequest bookingRequest) throws SQLException {
 
         User user = userService.isAuthorised();
         if (user == null) {
@@ -75,24 +75,23 @@ public class BookingService {
                 .toList();
 
         if (conflictList.isEmpty()) {
-            return Optional.of(bookingRepository.save(booking));
+            return bookingRepository.save(booking);
         }
 
-        return Optional.empty();
+        return null;
     }
 
     /**
      * Cancels booking. Method throws a RuntimeException in case of incorrect booking ID.
      */
     @Loggable
-    public Optional<Booking> cancelBooking(String bookingId) throws SQLException {
+    public Booking cancelBooking(String bookingId) throws SQLException {
 
         if (bookingId == null) {
             throw new InvalidIdException("Id must be not null.");
         }
 
-        Booking deletedBooking = bookingRepository.deleteById(Integer.valueOf(bookingId));
-        return Optional.of(deletedBooking);
+        return bookingRepository.deleteById(Integer.valueOf(bookingId));
     }
 
     /** Returns all bookings of the current day. **/

@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.example.entity.User;
 import org.example.mapper.UserMapper;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@Api(value = "User")
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {

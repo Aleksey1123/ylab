@@ -1,6 +1,7 @@
 package org.example.repository;
 
 import org.example.entity.User;
+import org.example.exception.InvalidResponseBodyException;
 import org.example.model.UserDTO;
 import org.springframework.stereotype.Repository;
 
@@ -59,8 +60,7 @@ public class UserRepositoryJDBC implements UserRepository {
                         .password(password)
                         .build();
             }
-
-            return null;
+            else throw new InvalidResponseBodyException("Error creating user with posted data.");
         }
         catch (SQLException e) {
             throw new SQLException(e);

@@ -2,6 +2,7 @@ package org.example.repository;
 
 import org.example.entity.Workplace;
 import org.example.exception.EntityNotFoundException;
+import org.example.exception.InvalidResponseBodyException;
 import org.example.model.WorkplaceDTO;
 import org.springframework.stereotype.Repository;
 
@@ -55,8 +56,7 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
                         .description(description)
                         .build();
             }
-
-            return null;
+            else throw new InvalidResponseBodyException("Error creating workplace with posted data.");
         }
         catch (SQLException e) {
             throw new SQLException(e.getMessage());

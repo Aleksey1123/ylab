@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.example.entity.ConferenceHall;
 import org.example.mapper.ConferenceHallMapper;
@@ -13,6 +14,7 @@ import java.util.List;
 
 
 @RestController
+@Api(value = "ConferenceHall")
 @RequestMapping("/conferenceHall")
 @RequiredArgsConstructor
 public class ConferenceHallController {

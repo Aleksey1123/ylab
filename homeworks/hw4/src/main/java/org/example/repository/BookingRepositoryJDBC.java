@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.entity.Booking;
 import org.example.entity.User;
 import org.example.exception.EntityNotFoundException;
+import org.example.exception.InvalidResponseBodyException;
 import org.example.exception.InvalidUsernameException;
 import org.springframework.stereotype.Repository;
 
@@ -98,8 +99,7 @@ public class BookingRepositoryJDBC implements BookingRepository {
                         .user(booking.getUser())
                         .build();
             }
-
-            return null;
+            else throw new InvalidResponseBodyException("Error creating user with posted data.");
         }
         catch (SQLException e) {
             throw new SQLException(e.getMessage());

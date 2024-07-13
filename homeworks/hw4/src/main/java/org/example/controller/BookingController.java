@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.example.entity.Booking;
 import org.example.mapper.BookingMapper;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Api(value = "Booking")
 @RequestMapping("/booking")
 @RequiredArgsConstructor
 public class BookingController {
@@ -93,17 +95,14 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<?> addBooking(@RequestBody BookingPostRequest bookingPostRequest) throws SQLException {
 
-        Optional<Booking> savedBooking = bookingService.makeBooking(bookingPostRequest);
-        BookingDTO savedBookingDTO = bookingMapper.bookingToBookingDTO(savedBooking.orElse(null));
+        Booking savedBooking = bookingService.makeBooking(bookingPostRequest);
+        BookingDTO savedBookingDTO = bookingMapper.bookingToBookingDTO(savedBooking);
 
         if (savedBookingDTO != null) {
             return ResponseEntity.ok(savedBookingDTO);
         }
 
-        return ResponseEntity.badRequest().body("Invalid request body.");
-//        return bookingService.makeBooking(bookingPostRequest)
-//                .map(booking -> ResponseEntity.ok(bookingMapper.bookingToBookingDTO(booking)))
-//                .orElseGet(() -> ResponseEntity.badRequest().build());
+        return ResponseEntity.badRequest().body("This time has been already booked.");
     }
 
     /** This method deletes an existing booking by id. Requires an id parameter.
@@ -115,17 +114,10 @@ public class BookingController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteBooking(@PathVariable String id) throws SQLException {
 
-//        Optional<Booking> deletedBooking = bookingService.cancelBooking(id);
-//        BookingDTO deletedBookingDTO = bookingMapper
-//                .bookingToBookingDTO(deletedBooking.orElse(null));
-//
-//        if (deletedBookingDTO != null) {
-//            return ResponseEntity.ok(deletedBookingDTO);
-//        }
-//
-//        return ResponseEntity.badRequest().body("Invalid id parameter.");
-        return bookingService.cancelBooking(id)
-                .map(booking -> ResponseEntity.ok(bookingMapper.bookingToBookingDTO(booking)))
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+        Booking deletedBooking = bookingService.cancelBooking(id);
+        BookingDTO deletedBookingDTO = bookingMapper
+                .bookingToBookingDTO(deletedBooking);
+
+        return ResponseEntity.ok(deletedBookingDTO);
     }
 }

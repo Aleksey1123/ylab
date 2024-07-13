@@ -3,6 +3,7 @@ package org.example.repository;
 import lombok.RequiredArgsConstructor;
 import org.example.entity.ConferenceHall;
 import org.example.exception.EntityNotFoundException;
+import org.example.exception.InvalidResponseBodyException;
 import org.example.model.ConferenceHallDTO;
 import org.springframework.stereotype.Repository;
 
@@ -61,8 +62,7 @@ public class ConferenceHallRepositoryJDBC implements ConferenceHallRepository {
                         .size(size)
                         .build();
             }
-
-            return null;
+            else throw new InvalidResponseBodyException("Error creating conference-hall with posted data.");
         }
         catch (SQLException e) {
             throw new SQLException(e.getMessage());
