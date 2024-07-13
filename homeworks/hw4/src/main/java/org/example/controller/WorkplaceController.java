@@ -1,5 +1,7 @@
 package org.example.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.example.entity.Workplace;
 import org.example.mapper.WorkplaceMapper;
@@ -12,6 +14,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @RestController
+@Api(value = "Workplace")
 @RequestMapping("/workplace")
 @RequiredArgsConstructor
 public class WorkplaceController {
@@ -33,6 +36,7 @@ public class WorkplaceController {
      *
      * **/
     @GetMapping("/{id}")
+    @ApiOperation(value = "Get booking by id", response = List.class)
     public ResponseEntity<WorkplaceDTO> getWorkplaceById(@PathVariable("id") String id) {
 
         Workplace workplace = workplaceService.getWorkplaceById(id);
@@ -40,6 +44,7 @@ public class WorkplaceController {
     }
 
     @GetMapping
+    @ApiOperation(value = "Get all bookings", response = List.class)
     public ResponseEntity<List<WorkplaceDTO>> getAllWorkplaces() throws SQLException {
 
         List<Workplace> workplaces = workplaceService.getAllWorkplaces();
@@ -55,6 +60,7 @@ public class WorkplaceController {
      *
      * **/
     @PostMapping
+    @ApiOperation(value = "Add booking", response = List.class)
     public ResponseEntity<WorkplaceDTO> createWorkplace(@RequestBody WorkplaceDTO workplaceDTO) throws SQLException {
 
         Workplace savedWorkplace = workplaceService.createWorkplace(workplaceDTO);
@@ -69,6 +75,7 @@ public class WorkplaceController {
      *
      * **/
     @PutMapping("/{id}")
+    @ApiOperation(value = "Update booking by id", response = List.class)
     public ResponseEntity<WorkplaceDTO> updateWorkplace(
             @PathVariable("id") String id,
             @RequestBody WorkplaceDTO workplaceDTO
@@ -84,6 +91,7 @@ public class WorkplaceController {
      *
      * **/
     @DeleteMapping("/{id}")
+    @ApiOperation(value = "Delete booking by id", response = List.class)
     public ResponseEntity<WorkplaceDTO> deleteWorkplace(@PathVariable("id") String id) throws SQLException {
 
         Workplace deletedWorkplace = workplaceService.deleteWorkplace(id);
