@@ -1,12 +1,15 @@
 package org.example.repository;
 
 import org.example.entity.User;
+import org.example.model.UserDTO;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
 /** Repository for user entity with basic CRUD operations. **/
+@Repository
 public class UserRepositoryJDBC implements UserRepository {
 
     /** This method manages the connection between app and database. **/
@@ -35,8 +38,10 @@ public class UserRepositoryJDBC implements UserRepository {
 
     /** This method saves user entity to a database. **/
     @Override
-    public User save(String username, String password) {
+    public User save(UserDTO userDTO) throws SQLException {
 
+        String username = userDTO.getUsername();
+        String password = userDTO.getPassword();
         String sql = "INSERT INTO users (username, password) VALUES (?, ?) RETURNING id";
 
         try (Connection connection = getConnection();
@@ -54,19 +59,18 @@ public class UserRepositoryJDBC implements UserRepository {
                         .password(password)
                         .build();
             }
-            else throw new SQLException("Creation of the user failed, try again.");
+
+            return null;
         }
         catch (SQLException e) {
-            System.out.println("SQL exception occurred: " + e.getMessage());
+            throw new SQLException(e);
         }
-
-        return null;
     }
 
     /** This method returns an existing user from a database by specific username, if
      * the query has an error this method will output the sql exception. **/
     @Override
-    public User findByUsername(String username) {
+    public User findByUsername(String username) throws SQLException {
 
         String sql = "SELECT * FROM users WHERE username = ?";
 
@@ -76,22 +80,21 @@ public class UserRepositoryJDBC implements UserRepository {
             statement.setString(1, username);
             ResultSet set = statement.executeQuery();
 
-            if (set.next())
+            if (set.next()) {
                 return mapUser(set);
-        }
-        catch (SQLException e) {
-            System.out.println("SQL exception occurred: " + e.getMessage());
+            }
+
             return null;
         }
-
-        System.out.println("User with username " + username + " not found.");
-        return null;
+        catch (SQLException e) {
+            throw new SQLException(e.getMessage());
+        }
     }
 
     /** This method returns an existing user from a database by specific id, if
      * the query has an error this method will output the sql exception. **/
     @Override
-    public User findById(Integer userId) {
+    public User findById(Integer userId) throws SQLException {
 
         String sql = "SELECT * FROM users WHERE id = ?";
 
@@ -101,22 +104,21 @@ public class UserRepositoryJDBC implements UserRepository {
             statement.setInt(1, userId);
             ResultSet set = statement.executeQuery();
 
-            if (set.next())
+            if (set.next()) {
                 return mapUser(set);
-        }
-        catch (SQLException e) {
-            System.out.println("SQL exception occurred: " + e.getMessage());
+            }
+
             return null;
         }
-
-        System.out.println("User with id " + userId + " not found.");
-        return null;
+        catch (SQLException e) {
+            throw new SQLException(e.getMessage());
+        }
     }
 
     /** This method returns all users from a database, if
      * the query has a mistake this method will output the sql exception. **/
     @Override
-    public Map<String, User> findAll() {
+    public Map<String, User> findAll() throws SQLException {
 
         String sql = "SELECT * FROM users";
 
@@ -133,9 +135,7 @@ public class UserRepositoryJDBC implements UserRepository {
             return users;
         }
         catch (SQLException e) {
-            System.out.println("SQL exception occurred: " + e.getMessage());
+            throw new SQLException(e.getMessage());
         }
-
-        return null;
     }
 }

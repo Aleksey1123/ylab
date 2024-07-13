@@ -1,26 +1,30 @@
 package org.example.service;
 
+import lombok.RequiredArgsConstructor;
 import org.example.entity.Booking;
 import org.example.entity.User;
+import org.example.exception.EntityNotFoundException;
+import org.example.exception.InvalidIdException;
+import org.example.exception.InvalidResourceTypeException;
+import org.example.exception.NotAuthorizedException;
 import org.example.model.BookingPostRequest;
-import org.example.repository.BookingRepositoryJDBC;
+import org.example.repository.BookingRepository;
+import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /** This service corresponds for work with Bookings Entities. **/
+@Service
+@RequiredArgsConstructor
 public class BookingService {
 
-    private UserService userService;
-    protected BookingRepositoryJDBC repository;
-
-    public BookingService(UserService userService) {
-        this.userService = userService;
-        repository = new BookingRepositoryJDBC();
-    }
+    private final UserService userService;
+    private final BookingRepository bookingRepository;
 
     /**
      * Booking a resource. Method throws DateTimeException in case of incorrect date entry.
@@ -28,119 +32,87 @@ public class BookingService {
      * if there is a booking conflict, in case of conflict makeBooking() returns false,
      * otherwise - true.
      */
-    public Booking makeBooking(BookingPostRequest bookingRequest) {
+    public Optional<Booking> makeBooking(BookingPostRequest bookingRequest) throws SQLException {
 
-        try {
-            User user = userService.isAuthorised();
-            if (user == null) {
-                System.out.println("You must log in before booking.");
-                return null;
-            }
-
-            String resourceType = bookingRequest.getResourceType();
-            int resourceId = Integer.parseInt(bookingRequest.getResourceId());
-            LocalDateTime startTime = LocalDateTime.parse(bookingRequest.getStartDateTimeString());
-            LocalDateTime endTime = LocalDateTime.parse(bookingRequest.getEndDateTimeString());
-            Booking booking;
-
-            if (!resourceType.equals("W") && !resourceType.equals("H")) {
-                System.out.println("Invalid resource type: " + resourceType);
-                return null;
-            }
-
-            if (resourceType.equals("W")) {
-                booking = Booking.builder()
-                        .workplaceId(resourceId)
-                        .hallId(null)
-                        .startTime(startTime)
-                        .endTime(endTime)
-                        .user(user)
-                        .build();
-            }
-            else {
-                booking = Booking.builder()
-                        .workplaceId(null)
-                        .hallId(resourceId)
-                        .startTime(startTime)
-                        .endTime(endTime)
-                        .user(user)
-                        .build();
-            }
-
-            List<Booking> conflictList = repository.findAllBookingsByResource(resourceId)
-                    .stream()
-                    .filter(b -> b.getStartTime().isBefore(endTime) && b.getEndTime().isAfter(startTime))
-                    .toList();
-
-            if (conflictList.isEmpty())
-                return repository.save(booking);
-        }
-        catch (DateTimeParseException e) {
-            System.out.println("Incorrect date entered.");
-        }
-        catch (NumberFormatException e) {
-            System.out.println("All entered ID's must be Integer type.");
+        User user = userService.isAuthorised();
+        if (user == null) {
+            throw new NotAuthorizedException("You must log in before booking.");
         }
 
-        return null;
+        String resourceType = bookingRequest.getResourceType();
+        int resourceId = Integer.parseInt(bookingRequest.getResourceId());
+        LocalDateTime startTime = LocalDateTime.parse(bookingRequest.getStartDateTimeString());
+        LocalDateTime endTime = LocalDateTime.parse(bookingRequest.getEndDateTimeString());
+        Booking booking;
+
+        if (!resourceType.equals("W") && !resourceType.equals("H")) {
+            throw new InvalidResourceTypeException("Invalid resource type: " + resourceType + ".");
+        }
+
+        if (resourceType.equals("W")) {
+            booking = Booking.builder()
+                    .workplaceId(resourceId)
+                    .hallId(null)
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .user(user)
+                    .build();
+        }
+        else {
+            booking = Booking.builder()
+                    .workplaceId(null)
+                    .hallId(resourceId)
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .user(user)
+                    .build();
+        }
+
+        List<Booking> conflictList = bookingRepository.findAllBookingsByResource(resourceId)
+                .stream()
+                .filter(b -> b.getStartTime().isBefore(endTime) && b.getEndTime().isAfter(startTime))
+                .toList();
+
+        if (conflictList.isEmpty()) {
+            return Optional.of(bookingRepository.save(booking));
+        }
+
+        return Optional.empty();
     }
 
     /**
      * Cancels booking. Method throws a RuntimeException in case of incorrect booking ID.
      */
-    public Booking cancelBooking(String bookingId) {
+    public Optional<Booking> cancelBooking(String bookingId) throws SQLException {
 
-        try {
-            Booking deletedBooking = repository.deleteById(Integer.valueOf(bookingId));
-            if (deletedBooking == null) {
-                System.out.println("Incorrect booking ID, please try again.");
-                return null;
-            }
-
-            return deletedBooking;
-        }
-        catch (NumberFormatException e) {
-            System.out.println(e.getMessage());
+        if (bookingId == null) {
+            throw new InvalidIdException("Id must be not null.");
         }
 
-        return null;
+        Booking deletedBooking = bookingRepository.deleteById(Integer.valueOf(bookingId));
+        return Optional.of(deletedBooking);
     }
 
     /** Returns all bookings of the current day. **/
-    public List<Booking> getAllBookingsByDate(String startDateTimeString) {
-        try {
-            LocalDateTime date = LocalDateTime.parse(startDateTimeString);
-            return repository.findAllBookingsByDate(date);
-        }
-        catch (DateTimeParseException e) {
-            System.out.println(e.getMessage());
-        }
+    public List<Booking> getAllBookingsByDate(String startDateTimeString) throws SQLException {
 
-        return null;
+        LocalDateTime date = LocalDateTime.parse(startDateTimeString);
+        return bookingRepository.findAllBookingsByDate(date);
     }
 
-    public List<Booking> getAllBookingsByUser(String username) {
+    public List<Booking> getAllBookingsByUser(String username) throws SQLException {
 
-        if (userService.findUserByUsername(username) != null)
-            return repository.findAllBookingsByUser(username);
-
-        return null;
+        return bookingRepository.findAllBookingsByUser(username);
     }
 
-    public List<Booking> getAllBookingsByResource(String resourceId) {
+    public List<Booking> getAllBookingsByResource(String resourceId) throws SQLException {
 
-        try {
-            return repository.findAllBookingsByResource(Integer.valueOf(resourceId));
-        }
-        catch (NumberFormatException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return null;
+        int id = Integer.parseInt(resourceId);
+        return bookingRepository.findAllBookingsByResource(id);
     }
 
-    public List<Booking> getAllBookings() {
+    public List<Booking> getAllBookings() throws SQLException {
 
-        return new ArrayList<>(repository.findAllBookings().values());
+        return new ArrayList<>(bookingRepository.findAllBookings().values());
     }
 }

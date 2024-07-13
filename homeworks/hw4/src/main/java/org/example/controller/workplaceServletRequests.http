@@ -1,11 +1,11 @@
 ### GET request to Workplace Servlet - getAllWorkplaces
-GET http://localhost:8080/hw3/workplace
+GET http://localhost:8080/hw4/workplace
 
 ### GET request to Workplace Servlet - getById
-GET http://localhost:8080/hw3/workplace?id=3
+GET http://localhost:8080/hw4/workplace/3
 
 ### Post request to Workplace Servlet - createWorkplace
-POST http://localhost:8080/hw3/workplace
+POST http://localhost:8080/hw4/workplace
 Content-Type: application/json
 
 {
@@ -13,7 +13,7 @@ Content-Type: application/json
 }
 
 ### Put request to Workplace Servlet - updateWorkplace
-PUT http://localhost:8080/hw3/workplace?id=9
+PUT http://localhost:8080/hw4/workplace/10
 Content-Type: application/json
 
 {
@@ -21,4 +21,4 @@ Content-Type: application/json
 }
 
 ### Delete request to Workplace Servlet - deleteWorkplace
-DELETE http://localhost:8080/hw3/workplace?id=9
+DELETE http://localhost:8080/hw4/workplace/10

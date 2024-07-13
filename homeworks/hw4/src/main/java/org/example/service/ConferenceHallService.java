@@ -1,55 +1,60 @@
 package org.example.service;
 
+import lombok.RequiredArgsConstructor;
 import org.example.entity.ConferenceHall;
-import org.example.repository.ConferenceHallRepositoryJDBC;
+import org.example.exception.EntityNotFoundException;
+import org.example.exception.InvalidIdTypeException;
+import org.example.exception.InvalidSizeTypeException;
+import org.example.model.ConferenceHallDTO;
+import org.example.repository.ConferenceHallRepository;
+import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 /** This service corresponds for work with ConferenceHall Entities. **/
+@Service
+@RequiredArgsConstructor
 public class ConferenceHallService {
 
-    protected ConferenceHallRepositoryJDBC repository;
-
-    public ConferenceHallService() {
-        this.repository = new ConferenceHallRepositoryJDBC();
-    }
+    private final ConferenceHallRepository repository;
 
     /** This method creates and returns a new conferenceHall with specific description and size. Throws
      * a NumberFormatException if the hall size is not a number. **/
-    public ConferenceHall createConferenceHall(String description, String size) {
+    public ConferenceHall createConferenceHall(ConferenceHallDTO conferenceHallDTO) throws SQLException {
 
         try {
-            return repository.save(description, Integer.valueOf(size));
+            Integer.parseInt(conferenceHallDTO.getSize());
+            return repository.save(conferenceHallDTO);
         }
         catch (NumberFormatException exception) {
-            System.out.println("Conference hall size must be an integer!");
+            throw new InvalidSizeTypeException("Conference-hall size must be an integer.");
         }
-
-        return null;
     }
 
     /** This method returns existing conferenceHall from a database. This method outputs
      * error if no conferenceHall with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
-    public ConferenceHall getConferenceHallById(String hallId) {
+    public ConferenceHall getConferenceHallById(String hallId) throws SQLException {
 
+        ConferenceHall hall;
         try {
-            ConferenceHall hall = repository.findById(Integer.valueOf(hallId));
-            if (hall == null)
-                System.out.println("No such conference-hall exists, please try again!");
-
-            return hall;
+            hall = repository.findById(Integer.valueOf(hallId));
+            if (hall == null) {
+                throw new EntityNotFoundException("Conference-hall with id: " + hallId + " not found.");
+            }
         }
         catch (NumberFormatException e) {
-            System.out.println("Conference-hall id must be an Integer type.");
+            throw new InvalidIdTypeException("Conference-hall id must be an Integer type.");
         }
 
-        return null;
+        return hall;
     }
 
     /** This method returns existing conferenceHall from a database. This method outputs
     * all existing conferenceHalls. **/
-    public List<ConferenceHall> getAllConferenceHalls() {
+    public List<ConferenceHall> getAllConferenceHalls() throws SQLException {
 
         return repository.findAll();
     }
@@ -57,29 +62,25 @@ public class ConferenceHallService {
     /** This method updates and returns existing conferenceHall from a database. This method outputs
      * error if no conferenceHall with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
-    public ConferenceHall updateConferenceHall(String hallId, String description, String size) {
+    public ConferenceHall updateConferenceHall(String hallId, ConferenceHallDTO conferenceHallDTO) throws SQLException {
 
         int hallIdInt;
         int sizeInt;
+        String description = conferenceHallDTO.getDescription();
+        String size = conferenceHallDTO.getSize();
+
         try {
             hallIdInt = Integer.parseInt(hallId);
         }
         catch (NumberFormatException e) {
-            System.out.println("Conference-hall id must be an Integer type.");
-            return null;
+            throw new InvalidIdTypeException("Conference-hall id must be an Integer type.");
         }
 
         try {
             sizeInt = Integer.parseInt(size);
         }
         catch (NumberFormatException e) {
-            System.out.println("Conference-hall size must be an Integer type.");
-            return null;
-        }
-
-        if (repository.findById(hallIdInt) == null) {
-            System.out.println("Conference-hall with ID: " + hallId + " does not exist.");
-            return null;
+            throw new InvalidSizeTypeException("Conference-hall size must be an Integer type.");
         }
 
         return repository.update(hallIdInt, description, sizeInt);
@@ -88,22 +89,14 @@ public class ConferenceHallService {
     /** This method deletes and returns existing conferenceHall from a database. This method outputs
      * error if no conferenceHall with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
-    public ConferenceHall deleteConferenceHall(String hallId) {
+    public ConferenceHall deleteConferenceHall(String hallId) throws SQLException {
 
         try {
             int idInt = Integer.parseInt(hallId);
-            ConferenceHall hall = repository.deleteById(idInt);
-            if (hall == null) {
-                System.out.println("Conference-hall with ID: " + hallId + " does not exist.");
-                return null;
-            }
-
-            return hall;
+            return repository.deleteById(idInt);
         }
         catch (NumberFormatException e) {
-            System.out.println("Conference-hall id must be an Integer type.");
+            throw new InvalidIdTypeException("Conference-hall id must be an Integer type.");
         }
-
-        return null;
     }
 }

@@ -1,12 +1,16 @@
 package org.example.repository;
 
 import org.example.entity.Workplace;
+import org.example.exception.EntityNotFoundException;
+import org.example.model.WorkplaceDTO;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /** Repository for workplace entity with basic CRUD operations. **/
+@Repository
 public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
 
     /** This method manages the connection between app and database. **/
@@ -33,8 +37,9 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
 
     /** This method saves workplace entity to a database. **/
     @Override
-    public Workplace save(String description) {
+    public Workplace save(WorkplaceDTO workplaceDTO) throws SQLException {
 
+        String description = workplaceDTO.getDescription();
         String sql = "INSERT INTO workplaces (description) VALUES (?) RETURNING id";
 
         try (Connection connection = getConnection();
@@ -50,19 +55,18 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
                         .description(description)
                         .build();
             }
-            else System.out.println("Creation of the workplace failed, try again.");
+
+            return null;
         }
         catch (SQLException e) {
-            System.out.println("SQL exception occurred: " + e.getMessage());
+            throw new SQLException(e.getMessage());
         }
-
-        return null;
     }
 
     /** This method updates an existing workplace from a database by specific id, if
      * such workplace doesn't exist method will output the error. **/
     @Override
-    public Workplace update(Integer workplaceId, String description) {
+    public Workplace update(Integer workplaceId, String description) throws SQLException {
 
         String sql = "UPDATE workplaces SET description = ? WHERE id = ?";
 
@@ -74,8 +78,7 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
 
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated == 0) {
-                System.out.println("Update of the workplace failed, no rows affected.");
-                return null;
+                throw new EntityNotFoundException("Workplace with id: " + workplaceId + " not found.");
             }
 
             return Workplace.builder()
@@ -84,16 +87,14 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
                     .build();
         }
         catch (SQLException e) {
-            System.out.println("SQL exception occurred: " + e.getMessage());
+            throw new SQLException(e);
         }
-
-        return null;
     }
 
     /** This method returns an existing workplace from a database by specific id, if
      * the query has an error this method will output the sql exception. **/
     @Override
-    public Workplace findById(Integer workplaceId) {
+    public Workplace findById(Integer workplaceId) throws SQLException {
 
         String sql = "SELECT * FROM workplaces WHERE id = ?";
 
@@ -103,22 +104,21 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
             statement.setInt(1, workplaceId);
             ResultSet set = statement.executeQuery();
 
-            if (set.next())
+            if (set.next()) {
                 return mapWorkplace(set);
-        }
-        catch (SQLException e) {
-            System.out.println("SQL exception occurred: " + e.getMessage());
+            }
+
             return null;
         }
-
-        System.out.println("Such workplace does not exist.");
-        return null;
+        catch (SQLException e) {
+            throw new SQLException(e.getMessage());
+        }
     }
 
     /** This method returns all workplaces from a database, if
      * the query has a mistake this method will output the sql exception. **/
     @Override
-    public List<Workplace> findAll() {
+    public List<Workplace> findAll() throws SQLException {
 
         String sql = "SELECT * FROM workplaces";
 
@@ -134,22 +134,14 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
             return workplaces;
         }
         catch (SQLException e) {
-            System.out.println("SQL exception occurred: " + e.getMessage());
+            throw new SQLException(e.getMessage());
         }
-
-        return null;
     }
 
     /** This method deletes an existing workplace from a database by specific id, if
      * such workplace doesn't exist method will output the error. **/
     @Override
-    public Workplace deleteById(Integer workplaceId) {
-
-        Workplace workplace = findById(workplaceId);
-        if (workplace == null) {
-            System.out.println("Workplace with id " + workplaceId + " not found.");
-            return null;
-        }
+    public Workplace deleteById(Integer workplaceId) throws SQLException {
 
         String sql = "DELETE FROM workplaces WHERE id = ?";
 
@@ -160,16 +152,13 @@ public class WorkplaceRepositoryJDBC implements WorkplaceRepository {
             int rowsDeleted = statement.executeUpdate();
 
             if (rowsDeleted == 0) {
-                System.out.println("Deletion of the workplace failed, no rows affected.");
-                return null;
+                throw new EntityNotFoundException("Workplace with id " + workplaceId + " not found.");
             }
 
-            return workplace;
+            return findById(workplaceId);
         }
         catch (SQLException e) {
-            System.out.println("SQL exception occurred: " + e.getMessage());
+            throw new SQLException(e.getMessage());
         }
-
-        return null;
     }
 }

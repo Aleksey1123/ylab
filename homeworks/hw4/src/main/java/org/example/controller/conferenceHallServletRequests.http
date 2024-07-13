@@ -1,11 +1,11 @@
 ### GET request to ConferenceHall Servlet - getAllConferenceHalls
-GET http://localhost:8080/hw3/conferenceHall
+GET http://localhost:8080/hw4/conferenceHall
 
 ### GET request to ConferenceHall Servlet - getById
-GET http://localhost:8080/hw3/conferenceHall?id=3
+GET http://localhost:8080/hw4/conferenceHall/3
 
 ### Post request to ConferenceHall Servlet - createConferenceHall
-POST http://localhost:8080/hw3/conferenceHall
+POST http://localhost:8080/hw4/conferenceHall
 Content-Type: application/json
 
 {
@@ -14,7 +14,7 @@ Content-Type: application/json
 }
 
 ### Put request to ConferenceHall Servlet - updateConferenceHall
-PUT http://localhost:8080/hw3/conferenceHall?id=6
+PUT http://localhost:8080/hw4/conferenceHall/7
 Content-Type: application/json
 
 {
@@ -23,4 +23,4 @@ Content-Type: application/json
 }
 
 ### Delete request to ConferenceHall Servlet - deleteConferenceHall
-DELETE http://localhost:8080/hw3/conferenceHall?id=6
+DELETE http://localhost:8080/hw4/conferenceHall/7

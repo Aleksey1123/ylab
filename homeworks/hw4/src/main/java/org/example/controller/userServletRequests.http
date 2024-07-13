@@ -1,29 +1,29 @@
 ### GET request to User Servlet - getAll
-GET http://localhost:8080/hw3/user
+GET http://localhost:8080/hw4/user
 
 <> 2024-07-05T180940.200.json
 <> 2024-07-05T180932.500.html
 <> 2024-07-05T175937.200.json
 
 ### GET request to User Servlet - getByUserame
-GET http://localhost:8080/hw3/user?username=admin
+GET http://localhost:8080/hw4/user/admin
 
 <> 2024-07-05T180949.200.json
 <> 2024-07-05T180106.200.json
 
 ### Post request to User Servlet - createUser
-POST http://localhost:8080/hw3/user
+POST http://localhost:8080/hw4/user
 Content-Type: application/json
 
 {
-  "username": "mikki",
-  "password": "lena"
+  "username": "finalTest",
+  "password": "123"
 }
 
 <> 2024-07-05T180430.201.txt
 
 ### Put request to User Servlet - authorize
-PUT http://localhost:8080/hw3/user
+PUT http://localhost:8080/hw4/user
 Content-Type: application/json
 
 {
@@ -35,4 +35,4 @@ Content-Type: application/json
 <> 2024-07-05T181127.400.json
 
 ### Delete request to User Servlet - logout
-DELETE http://localhost:8080/hw3/user?action=logout
+DELETE http://localhost:8080/hw4/user

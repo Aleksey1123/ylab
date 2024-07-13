@@ -1,26 +1,28 @@
 package org.example.service;
 
-import org.example.annotation.Loggable;
+import lombok.RequiredArgsConstructor;
 import org.example.entity.Workplace;
-import org.example.repository.WorkplaceRepositoryJDBC;
+import org.example.exception.EntityNotFoundException;
+import org.example.exception.InvalidIdTypeException;
+import org.example.model.WorkplaceDTO;
+import org.example.repository.WorkplaceRepository;
+import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /** This service corresponds for work with Workplace Entities. **/
-@Loggable
+@Service
+@RequiredArgsConstructor
 public class WorkplaceService {
 
-    protected WorkplaceRepositoryJDBC repository;
-
-    public WorkplaceService() {
-        repository = new WorkplaceRepositoryJDBC();
-    }
+    private final WorkplaceRepository repository;
 
     /** This method creates and returns a new workplace with specific description and size. Throws
      * a NumberFormatException if the hall size is not a number. **/
-    public Workplace createWorkplace(String description) {
+    public Workplace createWorkplace(WorkplaceDTO workplaceDTO) throws SQLException {
 
-        return repository.save(description);
+        return repository.save(workplaceDTO);
     }
 
     /** This method returns existing workplace from a database. This method outputs
@@ -30,21 +32,20 @@ public class WorkplaceService {
 
         try {
             Workplace workplace = repository.findById(Integer.valueOf(workplaceId));
-            if (workplace == null)
-                System.out.println("No such workplace exists, please try again!");
+            if (workplace == null) {
+                throw new EntityNotFoundException("Workplace with id: " + workplaceId + " not found.");
+            }
 
             return workplace;
         }
-        catch (NumberFormatException e) {
-            System.out.println("Workplace id must be an integer!");
+        catch (NumberFormatException | SQLException e) {
+            throw new InvalidIdTypeException("Workplace id must be an Integer type.");
         }
-
-        return null;
     }
 
     /** This method returns existing workplace from a database. This method outputs
      * all existing workplaces. **/
-    public List<Workplace> getAllWorkplaces() {
+    public List<Workplace> getAllWorkplaces() throws SQLException {
 
         return repository.findAll();
     }
@@ -52,43 +53,32 @@ public class WorkplaceService {
     /** This method updates and returns existing workplace from a database. This method outputs
      * error if no workplace with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
-    public Workplace updateWorkplace(String workspaceId, String description) {
+    public Workplace updateWorkplace(String workspaceId, WorkplaceDTO workplaceDTO) throws SQLException {
+
+        int idInt;
+        String description = workplaceDTO.getDescription();
 
         try {
-            int idInt = Integer.parseInt(workspaceId);
-            if (repository.findById(idInt) == null) {
-                System.out.println("Workplace with ID: " + workspaceId + " does not exist.");
-                return null;
-            }
-
-            return repository.update(idInt, description);
+            idInt = Integer.parseInt(workspaceId);
         }
         catch (NumberFormatException e) {
-            System.out.println("Workplace id must be an integer!");
+            throw new InvalidIdTypeException("Workplace id must be an Integer type.");
         }
 
-        return null;
+        return repository.update(idInt, description);
     }
 
     /** This method deletes and returns existing workplace from a database. This method outputs
      * error if no workplace with such id exists or throws
      * a NumberFormatException if the hall size is not a number. **/
-    public Workplace deleteWorkplace(String workspaceId) {
+    public Workplace deleteWorkplace(String workspaceId) throws SQLException {
 
         try {
             int idInt = Integer.parseInt(workspaceId);
-            Workplace workplace = repository.deleteById(idInt);
-            if (workplace == null) {
-                System.out.println("Workplace with ID: " + workspaceId + " does not exist.");
-                return null;
-            }
-
-            return workplace;
+            return repository.deleteById(idInt);
         }
         catch (NumberFormatException e) {
-            System.out.println("Workplace id must be an integer!");
+            throw new InvalidIdTypeException("Workplace id must be an Integer type.");
         }
-
-        return null;
     }
 }
