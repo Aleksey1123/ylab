@@ -1,10 +1,16 @@
 package org.example.service;
 
 import org.example.entity.User;
+import org.example.model.UserDTO;
 import org.example.repository.UserRepositoryJDBC;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -12,138 +18,59 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-//class UserServiceTest {
-//
-//    private UserService userService;
-//    private UserRepositoryJDBC userRepository;
-//
-//    @BeforeEach
-//    void setUp() {
-//        userRepository = mock(UserRepositoryJDBC.class);
-//        userService = new UserService();
-//        userService.repository = userRepository;
-//    }
-//
-//    @Test
-//    void testAddUserSuccess() {
-//        User user = new User();
-//        when(userRepository.save(anyString(), anyString())).thenReturn(user);
-//        when(userRepository.findAll()).thenReturn(Collections.emptyMap());
-//
-//        User result = userService.addUser("newUser", "password");
-//        assertNotNull(result);
-//        verify(userRepository, times(1)).save(anyString(), anyString());
-//    }
-//
-//    @Test
-//    void testAddUserConflict() {
-//        User existingUser = new User();
-//        existingUser.setUsername("existingUser");
-//        when(userRepository.findAll()).thenReturn(Map.of("1", existingUser));
-//
-//        User result = userService.addUser("existingUser", "password");
-//        assertNull(result);
-//        verify(userRepository, times(0)).save(anyString(), anyString());
-//    }
-//
-//    @Test
-//    void testAddUserEmptyUsername() {
-//        User result = userService.addUser("", "password");
-//        assertNull(result);
-//        verify(userRepository, times(0)).save(anyString(), anyString());
-//    }
-//
-//    @Test
-//    void testAuthorizeUserSuccess() {
-//        User user = new User();
-//        user.setUsername("user");
-//        user.setPassword("password");
-//        when(userRepository.findByUsername(anyString())).thenReturn(user);
-//
-//        boolean result = userService.authorizeUser(user);
-//        assertTrue(result);
-//        assertEquals(user, userService.isAuthorised());
-//        verify(userRepository, times(1)).findByUsername(anyString());
-//    }
-//
-//    @Test
-//    void testAuthorizeUserAlreadyLoggedIn() {
-//        User user = new User();
-//        user.setUsername("user");
-//        user.setPassword("password");
-//        userService.authorisedUser = user;
-//
-//        boolean result = userService.authorizeUser(user);
-//        assertFalse(result);
-//        verify(userRepository, times(0)).findByUsername(anyString());
-//    }
-//
-//    @Test
-//    void testAuthorizeUserIncorrectCredentials() {
-//        User user = new User();
-//        user.setUsername("user");
-//        user.setPassword("password");
-//        when(userRepository.findByUsername(anyString())).thenReturn(null);
-//
-//        boolean result = userService.authorizeUser(user);
-//        assertFalse(result);
-//        verify(userRepository, times(1)).findByUsername(anyString());
-//    }
-//
-//    @Test
-//    void testLogOutSuccess() {
-//        User user = new User();
-//        user.setUsername("user");
-//        userService.authorisedUser = user;
-//
-//        boolean result = userService.logOut();
-//        assertTrue(result);
-//        assertNull(userService.isAuthorised());
-//    }
-//
-//    @Test
-//    void testLogOutNotLoggedIn() {
-//        boolean result = userService.logOut();
-//        assertFalse(result);
-//    }
-//
-//    @Test
-//    void testIsAuthorised() {
-//        User user = new User();
-//        user.setUsername("user");
-//        userService.authorisedUser = user;
-//
-//        User result = userService.isAuthorised();
-//        assertEquals(user, result);
-//    }
-//
-//    @Test
-//    void testGetAllUsers() {
-//        Map<String, User> users = Map.of("1", new User());
-//        when(userRepository.findAll()).thenReturn(users);
-//
-//        Map<String, User> result = userService.getAllUsers();
-//        assertNotNull(result);
-//        assertEquals(1, result.size());
-//        verify(userRepository, times(1)).findAll();
-//    }
-//
-//    @Test
-//    void testFindUserByUsernameSuccess() {
-//        User user = new User();
-//        when(userRepository.findByUsername(anyString())).thenReturn(user);
-//
-//        User result = userService.findUserByUsername("user");
-//        assertNotNull(result);
-//        verify(userRepository, times(1)).findByUsername(anyString());
-//    }
-//
-//    @Test
-//    void testFindUserByUsernameNotFound() {
-//        when(userRepository.findByUsername(anyString())).thenReturn(null);
-//
-//        User result = userService.findUserByUsername("unknownUser");
-//        assertNull(result);
-//        verify(userRepository, times(1)).findByUsername(anyString());
-//    }
-//}
+@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
+
+    @Mock
+    private UserRepositoryJDBC userRepository;
+
+    @InjectMocks
+    private UserService userService;
+
+    private UserDTO testUser = UserDTO.builder()
+            .username("user")
+            .password("Build")
+            .build();
+
+    @Test
+    void testAddUserSuccess() throws SQLException {
+        when(userRepository.save(any(UserDTO.class))).thenReturn(new User());
+
+        User result = userService.addUser(testUser);
+        assertNotNull(result);
+    }
+
+    @Test
+    void testLogOutSuccess() {
+        User user = new User();
+        user.setUsername("user");
+        userService.authorisedUser = user;
+
+        boolean result = userService.logOut();
+        assertTrue(result);
+        assertNull(userService.isAuthorised());
+    }
+
+
+    @Test
+    void testGetAllUsers() throws SQLException {
+        Map<String, User> users = Map.of("1", new User());
+        when(userRepository.findAll()).thenReturn(users);
+
+        Map<String, User> result = userService.getAllUsers();
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(userRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testFindUserByUsernameSuccess() throws SQLException {
+        User user = new User();
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+
+        User result = userService.findUserByUsername("user");
+        assertNotNull(result);
+        verify(userRepository, times(1)).findByUsername(anyString());
+    }
+
+}
