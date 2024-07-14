@@ -34,3 +34,12 @@ docker exec -it app java -cp app/app.jar org.example.Main
 ## Ссылки
 - https://github.com/Aleksey1123/ylab/tree/hw3-feature/homeworks/hw3
 - https://github.com/Aleksey1123/ylab/pull/4
+
+# ДЗ №4
+
+## Как пользоваться приложением
+  Использование ничем не отличается от использования в ДЗ №3.
+
+## Ссылки
+- https://github.com/Aleksey1123/ylab/tree/hw4-feature/homeworks/hw4
+- https://github.com/Aleksey1123/ylab/pull/5
