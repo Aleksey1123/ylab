@@ -81,7 +81,6 @@ class BookingRepositoryJDBCTest {
                     "description VARCHAR(255) NOT NULL)");
         }
 
-        // Инициализация тестовых данных
         testUserWithId = User.builder()
                 .id(3)
                 .username("test")
