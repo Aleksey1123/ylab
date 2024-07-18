@@ -1,0 +1,108 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="001-create-schema" author="alex">
+        <sql>CREATE SCHEMA IF NOT EXISTS service_schema;</sql>
+    </changeSet>
+
+    <changeSet id="002-create-users-sequence" author="alex">
+        <createSequence schemaName="service_schema" sequenceName="users_id_seq" startValue="3"/>
+    </changeSet>
+
+    <changeSet id="003-create-users-table" author="alex">
+        <createTable schemaName="service_schema" tableName="users">
+            <column name="id" type="int" defaultValueComputed="nextval('service_schema.users_id_seq')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-create-conference-halls-sequence" author="alex">
+        <createSequence schemaName="service_schema" sequenceName="conference_halls_id_seq" startValue="3" />
+    </changeSet>
+
+    <changeSet id="005-create-conference-halls-table" author="alex">
+        <createTable schemaName="service_schema" tableName="conference_halls">
+            <column name="id" type="int" defaultValueComputed="nextval('service_schema.conference_halls_id_seq')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="size" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="006-create-workplaces-sequence" author="alex">
+        <createSequence schemaName="service_schema" sequenceName="workplaces_id_seq" startValue="3" />
+    </changeSet>
+
+    <changeSet id="007-create-workplaces-table" author="alex">
+        <createTable schemaName="service_schema" tableName="workplaces">
+            <column name="id" type="int" defaultValueComputed="nextval('service_schema.workplaces_id_seq')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="008-create-bookings-sequence" author="alex">
+        <createSequence schemaName="service_schema" sequenceName="bookings_id_seq" startValue="1" />
+    </changeSet>
+
+    <changeSet id="009-create-bookings-table" author="alex">
+        <createTable schemaName="service_schema" tableName="bookings">
+            <column name="id" type="int" defaultValueComputed="nextval('service_schema.bookings_id_seq')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="workplace_id" type="int"/>
+            <column name="conference_hall_id" type="int"/>
+            <column name="start_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="010-add-foreign-key-constraints" author="alex">
+        <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="workplace_id"
+                                 constraintName="fk_bookings_workplace_id"
+                                 referencedTableName="workplaces"
+                                 referencedColumnNames="id"
+                                 baseTableSchemaName="service_schema"
+                                 referencedTableSchemaName="service_schema"/>
+
+        <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="conference_hall_id"
+                                 constraintName="fk_bookings_conference_hall_id"
+                                 referencedTableName="conference_halls"
+                                 referencedColumnNames="id"
+                                 baseTableSchemaName="service_schema"
+                                 referencedTableSchemaName="service_schema"/>
+
+        <addForeignKeyConstraint baseTableName="bookings" baseColumnNames="user_id"
+                                 constraintName="fk_bookings_user_id"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 baseTableSchemaName="service_schema"
+                                 referencedTableSchemaName="service_schema"/>
+    </changeSet>
+</databaseChangeLog>
+
