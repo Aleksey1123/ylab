@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @Api(value = "Booking")
@@ -31,26 +30,27 @@ public class BookingController {
      *
      * **/
     @GetMapping
-    public ResponseEntity<?> getAllBookings(
-            @RequestParam(name = "action", defaultValue = "all") String action,
-            @RequestParam(name = "value", required = false) String value
-    ) throws SQLException {
+    public ResponseEntity<?> getAllBookings() throws SQLException {
 
-        switch (action) {
-            case "all" -> {
-                return ResponseEntity.ok(findAll());
-            }
-            case "resource" -> {
-                return ResponseEntity.ok(findAllByResource(value));
-            }
-            case "date" -> {
-                return ResponseEntity.ok(findAllByDate(value));
-            }
-            case "user" -> {
-                return ResponseEntity.ok(findAllByUser(value));
-            }
-        }
-        return ResponseEntity.badRequest().body("Invalid action parameter.");
+        return ResponseEntity.ok(findAll());
+    }
+
+    @GetMapping("/by-resource/{resourceId}")
+    public ResponseEntity<?> getAllBookingsByResource(@PathVariable String resourceId) throws SQLException {
+
+        return ResponseEntity.ok(findAllByResource(resourceId));
+    }
+
+    @GetMapping("/by-date/{date}")
+    public ResponseEntity<?> getAllBookingsByDate(@PathVariable String date) throws SQLException {
+
+        return ResponseEntity.ok(findAllByDate(date));
+    }
+
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<?> getAllBookingsByUser(@PathVariable String userId) throws SQLException {
+
+        return ResponseEntity.ok(findAllByUser(userId));
     }
 
     /** This method are used by doGet(). It returns a json of all bookings. **/
