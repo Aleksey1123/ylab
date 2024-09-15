@@ -26,7 +26,6 @@
 
 ## Ссылки
 - https://github.com/Aleksey1123/ylab/tree/master/homeworks/hw1
-- https://github.com/Aleksey1123/ylab/pull/2
 
 # Этап №2
   Добавлены БД - Postgres, миграции - Liquibase, docker.
@@ -40,7 +39,6 @@ docker exec -it app java -cp app/app.jar org.example.Main
 
 ## Ссылки
 - https://github.com/Aleksey1123/ylab/tree/hw2-feature/homeworks/hw2
-- https://github.com/Aleksey1123/ylab/pull/3
 
 # Этап №3
   Добавлены сервлеты + DTO + MapStruct. Сервлеты принимают json, валидация присутсвует.
@@ -50,14 +48,12 @@ docker exec -it app java -cp app/app.jar org.example.Main
 
 ## Ссылки
 - https://github.com/Aleksey1123/ylab/tree/hw3-feature/homeworks/hw3
-- https://github.com/Aleksey1123/ylab/pull/4
 
 # Этап №4
-  Добавлен Spring, соотвественно сервдеты заменены на контроллеры + Spring AOP.
+  Добавлен Spring, соотвественно сервлеты заменены на контроллеры + Spring AOP.
 
 ## Как пользоваться приложением
   Использование ничем не отличается от использования в этапе №3.
 
 ## Ссылки
 - https://github.com/Aleksey1123/ylab/tree/hw4-feature/homeworks/hw4
-- https://github.com/Aleksey1123/ylab/pull/5
